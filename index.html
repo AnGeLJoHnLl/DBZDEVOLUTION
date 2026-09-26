@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ki Clash: Super Devolution Arena</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="arcade-wrapper">
+        <header class="cabinet-header">
+            <div class="cabinet-title">⚡ KI CLASH: SUPER DEVOLUTION</div>
+            <div class="cabinet-actions">
+                <button class="btn-arcade" id="btnScanlines">CRT: ON</button>
+                <button class="btn-arcade" id="btnAudio">AUDIO: ON</button>
+                <button class="btn-arcade" id="btnFullscreen">PANTALLA COMPLETA</button>
+            </div>
+        </header>
+
+        <div class="screen-container scanlines" id="screenBox">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <!-- Touch Controls for Mobile/Tablets -->
+        <div class="touch-controls" id="touchControls">
+            <div class="touch-dpad">
+                <div></div>
+                <div class="touch-btn" data-key="KeyW">▲</div>
+                <div></div>
+                <div class="touch-btn" data-key="KeyA">◀</div>
+                <div></div>
+                <div class="touch-btn" data-key="KeyD">▶</div>
+                <div></div>
+                <div class="touch-btn" data-key="KeyS">▼</div>
+                <div></div>
+            </div>
+            <div class="touch-actions">
+                <div class="touch-btn touch-act-btn" data-key="KeyJ" style="background:#ff9900;">GOLPE</div>
+                <div class="touch-btn touch-act-btn" data-key="KeyK" style="background:#ffd700; color:#000;">KI</div>
+                <div class="touch-btn touch-act-btn" data-key="KeyL" style="background:#00e1ff; color:#000;">BEAM</div>
+                <div class="touch-btn touch-act-btn" data-key="Space" style="background:#0077ff;">CARGA</div>
+                <div class="touch-btn touch-act-btn" data-key="KeyU" style="background:#888888;">DEF</div>
+                <div class="touch-btn touch-act-btn" data-key="ShiftLeft" style="background:#9900ff;">DASH</div>
+            </div>
+        </div>
+
+        <!-- Controls Guide Legend -->
+        <footer class="controls-guide">
+            <div class="controls-card">
+                <h3>🎮 JUGADOR 1 (O Gamepad 1)</h3>
+                <div class="controls-grid">
+                    <span class="key-badge">W, A, S, D</span><span>Moverse en 8 direcciones</span>
+                    <span class="key-badge">J</span><span>Ataque cuerpo a cuerpo (Combos)</span>
+                    <span class="key-badge">K</span><span>Ráfaga Ki rápida</span>
+                    <span class="key-badge">L</span><span>Super Rayo de Energía (Kamehameha / Galick Gun)</span>
+                    <span class="key-badge">SPACE</span><span>Cargar Ki (Mantener presionado)</span>
+                    <span class="key-badge">SHIFT / I</span><span>Teletransporte / Dash rápido</span>
+                    <span class="key-badge">U</span><span>Guardia / Bloqueo (Reduce 75% daño)</span>
+                </div>
+            </div>
+
+            <div class="controls-card">
+                <h3>🕹️ JUGADOR 2 (Modo 2P Local o Gamepad 2)</h3>
+                <div class="controls-grid">
+                    <span class="key-badge">FLECHAS</span><span>Moverse en 8 direcciones</span>
+                    <span class="key-badge">NUM 1</span><span>Ataque cuerpo a cuerpo (Combos)</span>
+                    <span class="key-badge">NUM 2</span><span>Ráfaga Ki rápida</span>
+                    <span class="key-badge">NUM 3</span><span>Super Rayo de Energía</span>
+                    <span class="key-badge">NUM 0 / ENTER</span><span>Cargar Ki (Mantener presionado)</span>
+                    <span class="key-badge">NUM .</span><span>Teletransporte / Dash rápido</span>
+                    <span class="key-badge">NUM 4</span><span>Guardia / Bloqueo</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Game Scripts -->
+    <script src="audio.js"></script>
+    <script src="particles.js"></script>
+    <script src="renderer.js"></script>
+    <script src="projectiles.js"></script>
+    <script src="fighter.js"></script>
+    <script src="game.js"></script>
+
+    <script>
+        // UI Button controls
+        const screenBox = document.getElementById('screenBox');
+        const btnScanlines = document.getElementById('btnScanlines');
+        const btnAudio = document.getElementById('btnAudio');
+        const btnFullscreen = document.getElementById('btnFullscreen');
+
+        btnScanlines.addEventListener('click', () => {
+            screenBox.classList.toggle('scanlines');
+            btnScanlines.textContent = screenBox.classList.contains('scanlines') ? 'CRT: ON' : 'CRT: OFF';
+        });
+
+        btnAudio.addEventListener('click', () => {
+            if (window.soundEngine) {
+                window.soundEngine.muted = !window.soundEngine.muted;
+                btnAudio.textContent = window.soundEngine.muted ? 'AUDIO: OFF' : 'AUDIO: ON';
+            }
+        });
+
+        btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                screenBox.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        });
+
+        // Touch control bindings
+        const touchBtns = document.querySelectorAll('.touch-btn');
+        touchBtns.forEach(btn => {
+            const key = btn.dataset.key;
+            if (!key) return;
+
+            const triggerDown = (e) => {
+                e.preventDefault();
+                if (window.game) window.game.keys[key] = true;
+                if (window.soundEngine) window.soundEngine.resume();
+            };
+            const triggerUp = (e) => {
+                e.preventDefault();
+                if (window.game) window.game.keys[key] = false;
+            };
+
+            btn.addEventListener('touchstart', triggerDown, { passive: false });
+            btn.addEventListener('touchend', triggerUp, { passive: false });
+            btn.addEventListener('mousedown', triggerDown);
+            btn.addEventListener('mouseup', triggerUp);
+            btn.addEventListener('mouseleave', triggerUp);
+        });
+    </script>
+</body>
+</html>
