@@ -7,71 +7,143 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="arcade-wrapper">
-        <header class="cabinet-header">
-            <div class="cabinet-title">⚡ KI CLASH: SUPER DEVOLUTION</div>
-            <div class="cabinet-actions">
-                <button class="btn-arcade" id="btnScanlines">CRT: ON</button>
-                <button class="btn-arcade" id="btnAudio">AUDIO: ON</button>
-                <button class="btn-arcade" id="btnFullscreen">PANTALLA COMPLETA</button>
-            </div>
-        </header>
-
-        <div class="screen-container scanlines" id="screenBox">
-            <canvas id="gameCanvas"></canvas>
+    <div class="game-viewport scanlines" id="gameViewport">
+        <!-- Floating HUD Menu -->
+        <div class="floating-hud">
+            <button class="hud-btn" id="btnOpenSettings">⚙️ AJUSTES [ESC]</button>
+            <button class="hud-btn" id="btnToggleCRT">📺 CRT: ON</button>
+            <button class="hud-btn" id="btnFullscreen">⛶ PANTALLA COMPLETA</button>
         </div>
 
-        <!-- Touch Controls for Mobile/Tablets -->
+        <!-- Fullscreen Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- On-Screen Touch Controls for Mobile/Tablets -->
         <div class="touch-controls" id="touchControls">
             <div class="touch-dpad">
                 <div></div>
-                <div class="touch-btn" data-key="KeyW">▲</div>
+                <div class="touch-btn" data-key="up">▲</div>
                 <div></div>
-                <div class="touch-btn" data-key="KeyA">◀</div>
+                <div class="touch-btn" data-key="left">◀</div>
                 <div></div>
-                <div class="touch-btn" data-key="KeyD">▶</div>
+                <div class="touch-btn" data-key="right">▶</div>
                 <div></div>
-                <div class="touch-btn" data-key="KeyS">▼</div>
+                <div class="touch-btn" data-key="down">▼</div>
                 <div></div>
             </div>
             <div class="touch-actions">
-                <div class="touch-btn touch-act-btn" data-key="KeyJ" style="background:#ff9900;">GOLPE</div>
-                <div class="touch-btn touch-act-btn" data-key="KeyK" style="background:#ffd700; color:#000;">KI</div>
-                <div class="touch-btn touch-act-btn" data-key="KeyL" style="background:#00e1ff; color:#000;">BEAM</div>
-                <div class="touch-btn touch-act-btn" data-key="Space" style="background:#0077ff;">CARGA</div>
-                <div class="touch-btn touch-act-btn" data-key="KeyU" style="background:#888888;">DEF</div>
-                <div class="touch-btn touch-act-btn" data-key="ShiftLeft" style="background:#9900ff;">DASH</div>
+                <div class="touch-btn touch-act-btn" data-key="attack" style="background:#ff9900;">GOLPE</div>
+                <div class="touch-btn touch-act-btn" data-key="kiBlast" style="background:#ffd700; color:#000;">KI</div>
+                <div class="touch-btn touch-act-btn" data-key="beam" style="background:#00e1ff; color:#000;">BEAM</div>
+                <div class="touch-btn touch-act-btn" data-key="charge" style="background:#0077ff;">CARGA</div>
+                <div class="touch-btn touch-act-btn" data-key="guard" style="background:#888888;">DEF</div>
+                <div class="touch-btn touch-act-btn" data-key="dash" style="background:#9900ff;">DASH</div>
             </div>
         </div>
+    </div>
 
-        <!-- Controls Guide Legend -->
-        <footer class="controls-guide">
-            <div class="controls-card">
-                <h3>🎮 JUGADOR 1 (O Gamepad 1)</h3>
-                <div class="controls-grid">
-                    <span class="key-badge">W, A, S, D</span><span>Moverse en 8 direcciones</span>
-                    <span class="key-badge">J</span><span>Ataque cuerpo a cuerpo (Combos)</span>
-                    <span class="key-badge">K</span><span>Ráfaga Ki rápida</span>
-                    <span class="key-badge">L</span><span>Super Rayo de Energía (Kamehameha / Galick Gun)</span>
-                    <span class="key-badge">SPACE</span><span>Cargar Ki (Mantener presionado)</span>
-                    <span class="key-badge">SHIFT / I</span><span>Teletransporte / Dash rápido</span>
-                    <span class="key-badge">U</span><span>Guardia / Bloqueo (Reduce 75% daño)</span>
+    <!-- MODAL DE AJUSTES COMPLETO -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="settings-card">
+            <!-- Modal Header -->
+            <div class="settings-header">
+                <div class="settings-title">⚙️ AJUSTES DEL JUEGO</div>
+                <button class="btn-close" id="btnCloseSettings">&times;</button>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="settings-tabs">
+                <button class="tab-btn active" data-tab="tab-sound">🔊 SONIDO Y PANTALLA</button>
+                <button class="tab-btn" data-tab="tab-controls">⌨️ CONFIGURAR TECLAS</button>
+                <button class="tab-btn" data-tab="tab-guide">📖 GUÍA Y LEYENDA</button>
+            </div>
+
+            <!-- Tab 1: Sonido y Pantalla -->
+            <div class="settings-body">
+                <div class="tab-content active" id="tab-sound">
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span class="setting-title">Volumen Principal</span>
+                            <span class="setting-desc">Ajusta el volumen de efectos de sonido y rayos</span>
+                        </div>
+                        <div class="slider-group">
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8">
+                            <span class="volume-value" id="volumeLabel">80%</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span class="setting-title">Silenciar Sonido</span>
+                            <span class="setting-desc">Desactivar audio por completo</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="muteToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span class="setting-title">Filtro Retro CRT Scanlines</span>
+                            <span class="setting-desc">Líneas de escaneo para estilo arcade clásico</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="crtToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Configurar Teclas -->
+                <div class="tab-content" id="tab-controls">
+                    <div class="player-toggle-group">
+                        <button class="btn-player-select active" id="btnSelectP1">JUGADOR 1</button>
+                        <button class="btn-player-select" id="btnSelectP2">JUGADOR 2 (LOCAL)</button>
+                    </div>
+
+                    <div class="remap-table" id="remapContainer">
+                        <!-- Dynamic remap rows populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Tab 3: Guía y Leyenda -->
+                <div class="tab-content" id="tab-guide">
+                    <div class="guide-section">
+                        <div class="guide-title">🥋 SISTEMA DE COMBATE CUERPO A CUERPO</div>
+                        <ul class="guide-list">
+                            <li><strong>Combo de 4 golpes:</strong> Presiona repetidamente Golpe para encadenar Jab → Cross → Patada → Golpe Final.</li>
+                            <li><strong>Knockback:</strong> El último golpe lanza al rival contra el límite del escenario con daño aumentado.</li>
+                            <li><strong>Guardia / Bloqueo:</strong> Mantener Defensa reduce un <strong>75% del daño</strong> y evita ser empujado.</li>
+                        </ul>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title">⚡ SISTEMA DE ENERGÍA Y KI</div>
+                        <ul class="guide-list">
+                            <li><strong>Cargar Ki:</strong> Mantén presionado Carga de Ki para regenerar tu medidor azul con aura.</li>
+                            <li><strong>Ráfagas Ki:</strong> Ataques de proyectil rápidos a distancia (consumen 6 Ki).</li>
+                            <li><strong>Super Rayos (Kamehameha, etc.):</strong> Requieren 35 Ki. Atraviesan proyectiles normales y causan daño continuo.</li>
+                            <li><strong>Choque de Poderes (Beam Clash):</strong> Si dos rayos chocan de frente, ¡pulsa botones rápidamente para ganar el choque!</li>
+                        </ul>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title">🎮 COMPATIBILIDAD CON MANDOS</div>
+                        <ul class="guide-list">
+                            <li>Conecta cualquier mando de <strong>Xbox, PlayStation o genérico USB</strong> y se detectará automáticamente.</li>
+                            <li>Stick/D-pad para moverte, X para golpear, A para Ki, B para Rayo, Gatillos para Cargar y Dash.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <div class="controls-card">
-                <h3>🕹️ JUGADOR 2 (Modo 2P Local o Gamepad 2)</h3>
-                <div class="controls-grid">
-                    <span class="key-badge">FLECHAS</span><span>Moverse en 8 direcciones</span>
-                    <span class="key-badge">NUM 1</span><span>Ataque cuerpo a cuerpo (Combos)</span>
-                    <span class="key-badge">NUM 2</span><span>Ráfaga Ki rápida</span>
-                    <span class="key-badge">NUM 3</span><span>Super Rayo de Energía</span>
-                    <span class="key-badge">NUM 0 / ENTER</span><span>Cargar Ki (Mantener presionado)</span>
-                    <span class="key-badge">NUM .</span><span>Teletransporte / Dash rápido</span>
-                    <span class="key-badge">NUM 4</span><span>Guardia / Bloqueo</span>
-                </div>
+            <!-- Modal Footer -->
+            <div class="settings-footer">
+                <button class="btn-secondary" id="btnResetKeys">RESTABLECER TECLAS</button>
+                <button class="btn-primary" id="btnSaveCloseSettings">LISTO / CERRAR</button>
             </div>
-        </footer>
+        </div>
     </div>
 
     <!-- Game Scripts -->
@@ -82,47 +154,260 @@
     <script src="fighter.js"></script>
     <script src="game.js"></script>
 
+    <!-- Modal UI and Remapping Logic -->
     <script>
-        // UI Button controls
-        const screenBox = document.getElementById('screenBox');
-        const btnScanlines = document.getElementById('btnScanlines');
-        const btnAudio = document.getElementById('btnAudio');
+        const gameViewport = document.getElementById('gameViewport');
+        const settingsModal = document.getElementById('settingsModal');
+        const btnOpenSettings = document.getElementById('btnOpenSettings');
+        const btnCloseSettings = document.getElementById('btnCloseSettings');
+        const btnSaveCloseSettings = document.getElementById('btnSaveCloseSettings');
+        const btnToggleCRT = document.getElementById('btnToggleCRT');
         const btnFullscreen = document.getElementById('btnFullscreen');
 
-        btnScanlines.addEventListener('click', () => {
-            screenBox.classList.toggle('scanlines');
-            btnScanlines.textContent = screenBox.classList.contains('scanlines') ? 'CRT: ON' : 'CRT: OFF';
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeLabel = document.getElementById('volumeLabel');
+        const muteToggle = document.getElementById('muteToggle');
+        const crtToggle = document.getElementById('crtToggle');
+
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        const btnSelectP1 = document.getElementById('btnSelectP1');
+        const btnSelectP2 = document.getElementById('btnSelectP2');
+        const remapContainer = document.getElementById('remapContainer');
+        const btnResetKeys = document.getElementById('btnResetKeys');
+
+        let activePlayer = 'p1';
+        window.activeRemap = null; // { player: 'p1', action: 'attack', btnElement: ... }
+
+        // Action labels in Spanish
+        const actionLabels = {
+            up: 'Mover Arriba',
+            down: 'Mover Abajo',
+            left: 'Mover Izquierda',
+            right: 'Mover Derecha',
+            attack: 'Golpe / Combo Físico',
+            kiBlast: 'Ráfaga de Ki Rápida',
+            beam: 'Super Rayo de Energía (Kamehameha)',
+            charge: 'Cargar Ki (Aura)',
+            dash: 'Teletransporte / Dash Rápido',
+            guard: 'Guardia / Bloqueo'
+        };
+
+        // Format code for user display
+        function formatKeyCode(code) {
+            if (!code) return '---';
+            return code
+                .replace(/^Key/, '')
+                .replace(/^Digit/, '')
+                .replace(/^Numpad/, 'NUM ')
+                .replace('ArrowUp', 'ARRIBA')
+                .replace('ArrowDown', 'ABAJO')
+                .replace('ArrowLeft', 'IZQUIERDA')
+                .replace('ArrowRight', 'DERECHA')
+                .replace('Space', 'ESPACIO')
+                .replace('ShiftLeft', 'L-SHIFT')
+                .replace('ShiftRight', 'R-SHIFT')
+                .replace('ControlLeft', 'L-CTRL')
+                .replace('Enter', 'ENTER');
+        }
+
+        // Render Key Remap Table
+        function renderRemapTable() {
+            if (!window.game) return;
+            remapContainer.innerHTML = '';
+            const bindings = window.game.keyBindings[activePlayer];
+
+            for (const [action, code] of Object.entries(bindings)) {
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'action-label';
+                labelDiv.textContent = actionLabels[action] || action;
+
+                const btn = document.createElement('button');
+                btn.className = 'key-bind-btn';
+                btn.textContent = formatKeyCode(code);
+                btn.dataset.action = action;
+
+                btn.addEventListener('click', () => {
+                    if (window.activeRemap) {
+                        window.activeRemap.btnElement.classList.remove('recording');
+                        window.activeRemap.btnElement.textContent = formatKeyCode(
+                            window.game.keyBindings[window.activeRemap.player][window.activeRemap.action]
+                        );
+                    }
+                    window.activeRemap = { player: activePlayer, action, btnElement: btn };
+                    btn.classList.add('recording');
+                    btn.textContent = 'PULSA TECLA...';
+                });
+
+                remapContainer.appendChild(labelDiv);
+                remapContainer.appendChild(btn);
+            }
+        }
+
+        // Finish Remap from game.js keydown
+        window.finishRemap = function(keyCode) {
+            if (!window.activeRemap || !window.game) return;
+            const { player, action, btnElement } = window.activeRemap;
+
+            window.game.keyBindings[player][action] = keyCode;
+            window.game.saveKeybindings();
+
+            btnElement.classList.remove('recording');
+            btnElement.textContent = formatKeyCode(keyCode);
+            window.activeRemap = null;
+
+            if (window.soundEngine) window.soundEngine.playHit(false);
+        };
+
+        // Open/Close Settings Modal
+        window.toggleSettingsModal = function() {
+            const isOpen = settingsModal.classList.contains('open');
+            if (isOpen) {
+                closeSettings();
+            } else {
+                openSettings();
+            }
+        };
+
+        function openSettings() {
+            settingsModal.classList.add('open');
+            if (window.game) window.game.isPaused = true;
+            if (window.soundEngine) {
+                volumeSlider.value = window.soundEngine.volume;
+                volumeLabel.textContent = Math.round(window.soundEngine.volume * 100) + '%';
+                muteToggle.checked = window.soundEngine.muted;
+            }
+            renderRemapTable();
+        }
+
+        function closeSettings() {
+            settingsModal.classList.remove('open');
+            if (window.activeRemap) {
+                window.activeRemap.btnElement.classList.remove('recording');
+                window.activeRemap = null;
+            }
+            if (window.game) window.game.isPaused = false;
+        }
+
+        btnOpenSettings.addEventListener('click', openSettings);
+        btnCloseSettings.addEventListener('click', closeSettings);
+        btnSaveCloseSettings.addEventListener('click', closeSettings);
+
+        // Tab Switching
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabButtons.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                btn.classList.add('active');
+                const targetId = btn.dataset.tab;
+                document.getElementById(targetId).classList.add('active');
+
+                if (targetId === 'tab-controls') {
+                    renderRemapTable();
+                }
+            });
         });
 
-        btnAudio.addEventListener('click', () => {
-            if (window.soundEngine) {
-                window.soundEngine.muted = !window.soundEngine.muted;
-                btnAudio.textContent = window.soundEngine.muted ? 'AUDIO: OFF' : 'AUDIO: ON';
+        // Player toggle in Remap
+        btnSelectP1.addEventListener('click', () => {
+            activePlayer = 'p1';
+            btnSelectP1.classList.add('active');
+            btnSelectP2.classList.remove('active');
+            renderRemapTable();
+        });
+
+        btnSelectP2.addEventListener('click', () => {
+            activePlayer = 'p2';
+            btnSelectP2.classList.add('active');
+            btnSelectP1.classList.remove('active');
+            renderRemapTable();
+        });
+
+        // Reset Keys to Default
+        btnResetKeys.addEventListener('click', () => {
+            if (window.game) {
+                window.game.resetDefaultKeybindings();
+                renderRemapTable();
+                if (window.soundEngine) window.soundEngine.playHit(true);
             }
         });
 
+        // Volume & Mute Controls
+        volumeSlider.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            volumeLabel.textContent = Math.round(val * 100) + '%';
+            if (window.soundEngine) window.soundEngine.setVolume(val);
+        });
+
+        muteToggle.addEventListener('change', (e) => {
+            if (window.soundEngine) {
+                const muted = window.soundEngine.toggleMute();
+                muteToggle.checked = muted;
+            }
+        });
+
+        // CRT Filter Toggle
+        function updateCRTUI(enabled) {
+            if (enabled) {
+                gameViewport.classList.add('scanlines');
+                btnToggleCRT.textContent = '📺 CRT: ON';
+                btnToggleCRT.classList.remove('active');
+            } else {
+                gameViewport.classList.remove('scanlines');
+                btnToggleCRT.textContent = '📺 CRT: OFF';
+                btnToggleCRT.classList.add('active');
+            }
+            crtToggle.checked = enabled;
+        }
+
+        btnToggleCRT.addEventListener('click', () => {
+            const willEnable = !gameViewport.classList.contains('scanlines');
+            updateCRTUI(willEnable);
+        });
+
+        crtToggle.addEventListener('change', (e) => {
+            updateCRTUI(e.target.checked);
+        });
+
+        // Fullscreen Toggle
         btnFullscreen.addEventListener('click', () => {
             if (!document.fullscreenElement) {
-                screenBox.requestFullscreen().catch(() => {});
+                document.documentElement.requestFullscreen().catch(() => {});
+                btnFullscreen.textContent = '⛶ SALIR PANTALLA COMPLETA';
             } else {
                 document.exitFullscreen().catch(() => {});
+                btnFullscreen.textContent = '⛶ PANTALLA COMPLETA';
             }
         });
 
-        // Touch control bindings
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                btnFullscreen.textContent = '⛶ PANTALLA COMPLETA';
+            } else {
+                btnFullscreen.textContent = '⛶ SALIR PANTALLA COMPLETA';
+            }
+        });
+
+        // Touch Control Listeners for Mobile
         const touchBtns = document.querySelectorAll('.touch-btn');
         touchBtns.forEach(btn => {
-            const key = btn.dataset.key;
-            if (!key) return;
+            const action = btn.dataset.key;
+            if (!action) return;
 
             const triggerDown = (e) => {
                 e.preventDefault();
-                if (window.game) window.game.keys[key] = true;
+                if (window.game && window.game.p1) {
+                    window.game.p1.input[action] = true;
+                }
                 if (window.soundEngine) window.soundEngine.resume();
             };
             const triggerUp = (e) => {
                 e.preventDefault();
-                if (window.game) window.game.keys[key] = false;
+                if (window.game && window.game.p1) {
+                    window.game.p1.input[action] = false;
+                }
             };
 
             btn.addEventListener('touchstart', triggerDown, { passive: false });

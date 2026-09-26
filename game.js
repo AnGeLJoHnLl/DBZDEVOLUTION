@@ -14,6 +14,7 @@ class KiClashGame {
         this.state = 'MENU';
         this.mode = '1P_CPU'; // '1P_CPU' or '1P_2P'
         this.currentStage = 'tournament'; // 'tournament', 'wasteland', 'namek', 'chamber'
+        this.isPaused = false;
 
         // Fighter Selections
         this.p1Char = 'goku';
@@ -34,28 +35,95 @@ class KiClashGame {
         this.roundMessage = '';
         this.messageTimer = 0;
 
-        // Keys tracking
+        // Keys tracking & Configurable Keybindings
         this.keys = {};
+        this.initKeybindings();
         this.setupInputs();
 
         // Gamepad tracking
         this.gamepadConnected = false;
 
         // Camera
-        this.camera = { x: 0, y: 0, targetX: 0, targetY: 0 };
+        this.camera = { x: 0, y: 0 };
 
         // Start Loop
-        this.lastTime = performance.now();
         requestAnimationFrame((t) => this.loop(t));
+    }
+
+    initKeybindings() {
+        this.defaultBindings = {
+            p1: {
+                up: 'KeyW',
+                down: 'KeyS',
+                left: 'KeyA',
+                right: 'KeyD',
+                attack: 'KeyJ',
+                kiBlast: 'KeyK',
+                beam: 'KeyL',
+                charge: 'Space',
+                dash: 'ShiftLeft',
+                guard: 'KeyU'
+            },
+            p2: {
+                up: 'ArrowUp',
+                down: 'ArrowDown',
+                left: 'ArrowLeft',
+                right: 'ArrowRight',
+                attack: 'Numpad1',
+                kiBlast: 'Numpad2',
+                beam: 'Numpad3',
+                charge: 'Numpad0',
+                dash: 'NumpadDecimal',
+                guard: 'Numpad4'
+            }
+        };
+
+        this.keyBindings = JSON.parse(JSON.stringify(this.defaultBindings));
+
+        // Load saved custom bindings
+        try {
+            const saved = localStorage.getItem('ki_clash_keybindings');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.p1 && parsed.p2) {
+                    this.keyBindings = parsed;
+                }
+            }
+        } catch (e) {}
+    }
+
+    saveKeybindings() {
+        try {
+            localStorage.setItem('ki_clash_keybindings', JSON.stringify(this.keyBindings));
+        } catch (e) {}
+    }
+
+    resetDefaultKeybindings() {
+        this.keyBindings = JSON.parse(JSON.stringify(this.defaultBindings));
+        this.saveKeybindings();
     }
 
     setupInputs() {
         window.addEventListener('keydown', (e) => {
+            // Check if settings modal is open and waiting for a key remap
+            if (window.activeRemap) {
+                e.preventDefault();
+                window.finishRemap(e.code);
+                return;
+            }
+
+            // ESC opens/closes settings modal
+            if (e.code === 'Escape') {
+                e.preventDefault();
+                window.toggleSettingsModal();
+                return;
+            }
+
             this.keys[e.code] = true;
             if (window.soundEngine) window.soundEngine.resume();
 
             // Menu interactions
-            if (this.state === 'MENU') {
+            if (this.state === 'MENU' && !this.isPaused) {
                 if (e.code === 'KeyW' || e.code === 'ArrowUp') {
                     this.mode = '1P_CPU';
                     if (window.soundEngine) window.soundEngine.playHit(false);
@@ -66,24 +134,24 @@ class KiClashGame {
                     this.state = 'SELECT';
                     if (window.soundEngine) window.soundEngine.playHit(true);
                 }
-            } else if (this.state === 'SELECT') {
-                // P1 selection: A/D or W/S
-                if (e.code === 'KeyA') {
+            } else if (this.state === 'SELECT' && !this.isPaused) {
+                // P1 selection: A/D
+                if (e.code === this.keyBindings.p1.left || e.code === 'KeyA') {
                     this.selectIndexP1 = (this.selectIndexP1 - 1 + this.charList.length) % this.charList.length;
                     this.p1Char = this.charList[this.selectIndexP1];
                     if (window.soundEngine) window.soundEngine.playHit(false);
-                } else if (e.code === 'KeyD') {
+                } else if (e.code === this.keyBindings.p1.right || e.code === 'KeyD') {
                     this.selectIndexP1 = (this.selectIndexP1 + 1) % this.charList.length;
                     this.p1Char = this.charList[this.selectIndexP1];
                     if (window.soundEngine) window.soundEngine.playHit(false);
                 }
 
                 // P2 selection: Left/Right arrows
-                if (e.code === 'ArrowLeft') {
+                if (e.code === this.keyBindings.p2.left || e.code === 'ArrowLeft') {
                     this.selectIndexP2 = (this.selectIndexP2 - 1 + this.charList.length) % this.charList.length;
                     this.p2Char = this.charList[this.selectIndexP2];
                     if (window.soundEngine) window.soundEngine.playHit(false);
-                } else if (e.code === 'ArrowRight') {
+                } else if (e.code === this.keyBindings.p2.right || e.code === 'ArrowRight') {
                     this.selectIndexP2 = (this.selectIndexP2 + 1) % this.charList.length;
                     this.p2Char = this.charList[this.selectIndexP2];
                     if (window.soundEngine) window.soundEngine.playHit(false);
@@ -98,11 +166,11 @@ class KiClashGame {
                 }
 
                 // Start Fight
-                if (e.code === 'Enter' || e.code === 'KeyJ') {
+                if (e.code === 'Enter' || e.code === this.keyBindings.p1.attack || e.code === 'KeyJ') {
                     this.startFight();
                 }
-            } else if (this.state === 'GAMEOVER') {
-                if (e.code === 'Enter' || e.code === 'KeyJ') {
+            } else if (this.state === 'GAMEOVER' && !this.isPaused) {
+                if (e.code === 'Enter' || e.code === this.keyBindings.p1.attack || e.code === 'KeyJ') {
                     this.state = 'SELECT';
                 }
             }
@@ -160,18 +228,20 @@ class KiClashGame {
 
     updateInputs() {
         if (!this.p1 || !this.p2) return;
+        const b1 = this.keyBindings.p1;
+        const b2 = this.keyBindings.p2;
 
-        // Player 1 Controls (WASD + J, K, L, Space, Shift, U)
-        this.p1.input.up = !!(this.keys['KeyW']);
-        this.p1.input.down = !!(this.keys['KeyS']);
-        this.p1.input.left = !!(this.keys['KeyA']);
-        this.p1.input.right = !!(this.keys['KeyD']);
-        this.p1.input.attack = !!(this.keys['KeyJ']);
-        this.p1.input.kiBlast = !!(this.keys['KeyK']);
-        this.p1.input.beam = !!(this.keys['KeyL']);
-        this.p1.input.charge = !!(this.keys['Space']);
-        this.p1.input.dash = !!(this.keys['ShiftLeft'] || this.keys['KeyI']);
-        this.p1.input.guard = !!(this.keys['KeyU']);
+        // Player 1 Controls (customizable bindings)
+        this.p1.input.up = !!(this.keys[b1.up]);
+        this.p1.input.down = !!(this.keys[b1.down]);
+        this.p1.input.left = !!(this.keys[b1.left]);
+        this.p1.input.right = !!(this.keys[b1.right]);
+        this.p1.input.attack = !!(this.keys[b1.attack]);
+        this.p1.input.kiBlast = !!(this.keys[b1.kiBlast]);
+        this.p1.input.beam = !!(this.keys[b1.beam]);
+        this.p1.input.charge = !!(this.keys[b1.charge]);
+        this.p1.input.dash = !!(this.keys[b1.dash]);
+        this.p1.input.guard = !!(this.keys[b1.guard]);
 
         // Check Gamepad for Player 1
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -192,18 +262,18 @@ class KiClashGame {
             if (pad.buttons[5]?.pressed || pad.buttons[7]?.pressed) this.p1.input.dash = true;   // R1/R2
         }
 
-        // Player 2 Controls (Arrows + Numpad or UI keys, only if Human 2P)
+        // Player 2 Controls (customizable bindings, only if Human 2P)
         if (!this.p2.isAI) {
-            this.p2.input.up = !!(this.keys['ArrowUp']);
-            this.p2.input.down = !!(this.keys['ArrowDown']);
-            this.p2.input.left = !!(this.keys['ArrowLeft']);
-            this.p2.input.right = !!(this.keys['ArrowRight']);
-            this.p2.input.attack = !!(this.keys['Numpad1'] || this.keys['Digit1']);
-            this.p2.input.kiBlast = !!(this.keys['Numpad2'] || this.keys['Digit2']);
-            this.p2.input.beam = !!(this.keys['Numpad3'] || this.keys['Digit3']);
-            this.p2.input.charge = !!(this.keys['Numpad0'] || this.keys['Enter']);
-            this.p2.input.dash = !!(this.keys['NumpadDecimal'] || this.keys['Digit4']);
-            this.p2.input.guard = !!(this.keys['Numpad4'] || this.keys['Digit5']);
+            this.p2.input.up = !!(this.keys[b2.up]);
+            this.p2.input.down = !!(this.keys[b2.down]);
+            this.p2.input.left = !!(this.keys[b2.left]);
+            this.p2.input.right = !!(this.keys[b2.right]);
+            this.p2.input.attack = !!(this.keys[b2.attack]);
+            this.p2.input.kiBlast = !!(this.keys[b2.kiBlast]);
+            this.p2.input.beam = !!(this.keys[b2.beam]);
+            this.p2.input.charge = !!(this.keys[b2.charge]);
+            this.p2.input.dash = !!(this.keys[b2.dash]);
+            this.p2.input.guard = !!(this.keys[b2.guard]);
 
             // Gamepad 2 for Player 2
             if (gamepads && gamepads[1]) {
@@ -224,11 +294,13 @@ class KiClashGame {
         }
     }
 
-    loop(currentTime) {
-        requestAnimationFrame((t) => this.loop(t));
+    loop() {
+        requestAnimationFrame(() => this.loop());
 
-        // Update physics & game logic
-        this.update();
+        // Update physics & game logic if not paused
+        if (!this.isPaused) {
+            this.update();
+        }
 
         // Render everything
         this.render();
@@ -336,17 +408,27 @@ class KiClashGame {
             }
         }
 
+        // Render Pause overlay if settings modal is open
+        if (this.isPaused) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.font = 'bold 24px "Courier New", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#ffe600';
+            ctx.fillText('PAUSA - AJUSTES ABIERTOS', this.width / 2, this.height / 2);
+            ctx.restore();
+        }
+
         ctx.restore();
     }
 
     renderStage(ctx) {
         switch (this.currentStage) {
             case 'tournament':
-                // World Martial Arts Tournament Stage
-                ctx.fillStyle = '#65a5d1'; // Sky
+                ctx.fillStyle = '#65a5d1';
                 ctx.fillRect(0, 0, this.width, 100);
 
-                // Mountain peaks in distance
                 ctx.fillStyle = '#3f729b';
                 ctx.beginPath();
                 ctx.moveTo(0, 100);
@@ -358,11 +440,9 @@ class KiClashGame {
                 ctx.lineTo(640, 100);
                 ctx.fill();
 
-                // Tournament Ring (Stone tiles with border)
-                ctx.fillStyle = '#cfb997'; // Stone ring
+                ctx.fillStyle = '#cfb997';
                 ctx.fillRect(0, 100, this.width, this.height - 100);
 
-                // Tile grid lines
                 ctx.strokeStyle = '#a89070';
                 ctx.lineWidth = 1.5;
                 for (let x = 0; x < this.width; x += 40) {
@@ -378,47 +458,40 @@ class KiClashGame {
                     ctx.stroke();
                 }
 
-                // Ring edge red border
                 ctx.fillStyle = '#b82b2b';
                 ctx.fillRect(0, 96, this.width, 6);
                 break;
 
             case 'wasteland':
-                // Canyon Wasteland
-                ctx.fillStyle = '#e89b4f'; // Sunset sky
+                ctx.fillStyle = '#e89b4f';
                 ctx.fillRect(0, 0, this.width, 110);
 
-                ctx.fillStyle = '#8f4f20'; // Distant canyon rocks
+                ctx.fillStyle = '#8f4f20';
                 ctx.fillRect(0, 80, this.width, 30);
                 ctx.fillRect(60, 45, 70, 50);
                 ctx.fillRect(450, 40, 90, 60);
 
-                ctx.fillStyle = '#c57835'; // Sandy dirt ground
+                ctx.fillStyle = '#c57835';
                 ctx.fillRect(0, 110, this.width, this.height - 110);
 
-                // Ground craters & cracks
                 ctx.fillStyle = '#9b5820';
                 ctx.fillRect(120, 180, 50, 14);
                 ctx.fillRect(400, 260, 70, 18);
                 break;
 
             case 'namek':
-                // Planet Namek
-                ctx.fillStyle = '#56bf9b'; // Greenish sky
+                ctx.fillStyle = '#56bf9b';
                 ctx.fillRect(0, 0, this.width, 100);
 
-                // Two Namekian suns
                 ctx.fillStyle = '#fff4a3';
                 ctx.beginPath();
                 ctx.arc(140, 45, 22, 0, Math.PI * 2);
                 ctx.arc(480, 35, 14, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Namekian vibrant blue grass & islands
                 ctx.fillStyle = '#2db87d';
                 ctx.fillRect(0, 100, this.width, this.height - 100);
 
-                // Blue lakes
                 ctx.fillStyle = '#228ba8';
                 ctx.beginPath();
                 ctx.ellipse(320, 140, 90, 20, 0, 0, Math.PI * 2);
@@ -426,11 +499,9 @@ class KiClashGame {
                 break;
 
             case 'chamber':
-                // Hyperbolic Time Chamber
-                ctx.fillStyle = '#ffffff'; // Endless white void
+                ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, this.width, this.height);
 
-                // Floor horizon
                 ctx.strokeStyle = '#d6d6e2';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
@@ -438,7 +509,6 @@ class KiClashGame {
                 ctx.lineTo(this.width, 110);
                 ctx.stroke();
 
-                // Hourglass dome in distance
                 ctx.fillStyle = '#d4af37';
                 ctx.fillRect(290, 75, 60, 35);
                 ctx.beginPath();
@@ -455,10 +525,7 @@ class KiClashGame {
         const barHeight = 16;
         const topY = 16;
 
-        // Player 1 HUD (Left)
         this.renderFighterBars(ctx, this.p1, 24, topY, barWidth, barHeight, false);
-
-        // Player 2 HUD (Right)
         this.renderFighterBars(ctx, this.p2, this.width - 24 - barWidth, topY, barWidth, barHeight, true);
 
         // Center Timer
@@ -479,17 +546,14 @@ class KiClashGame {
     renderFighterBars(ctx, fighter, x, y, width, height, isRight) {
         ctx.save();
 
-        // Portrait & Name
         ctx.font = 'bold 13px "Courier New", monospace';
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = isRight ? 'right' : 'left';
         ctx.fillText(fighter.name + (fighter.isAI ? ' (CPU)' : ''), isRight ? x + width : x, y - 4);
 
-        // Health Bar Background
         ctx.fillStyle = '#222222';
         ctx.fillRect(x, y, width, height);
 
-        // Health fill
         const hpPercent = Math.max(0, fighter.health / fighter.maxHealth);
         const hpWidth = width * hpPercent;
         const hpColor = hpPercent > 0.5 ? '#00e676' : (hpPercent > 0.25 ? '#ffea00' : '#ff1744');
@@ -505,7 +569,6 @@ class KiClashGame {
         ctx.lineWidth = 1.5;
         ctx.strokeRect(x, y, width, height);
 
-        // Ki Bar (Below health bar)
         const kiY = y + height + 4;
         const kiHeight = 8;
         ctx.fillStyle = '#111111';
@@ -525,7 +588,6 @@ class KiClashGame {
         ctx.lineWidth = 1;
         ctx.strokeRect(x, kiY, width, kiHeight);
 
-        // Combo Counter
         if (fighter.comboStep > 1) {
             ctx.font = 'italic bold 16px "Courier New", monospace';
             ctx.fillStyle = '#ffeb3b';
@@ -538,12 +600,9 @@ class KiClashGame {
 
     renderMenu(ctx) {
         ctx.save();
-
-        // Dark overlay
         ctx.fillStyle = 'rgba(10, 10, 20, 0.78)';
         ctx.fillRect(0, 0, this.width, this.height);
 
-        // Title
         ctx.font = '900 46px "Impact", "Arial Black", sans-serif';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#ff9900';
@@ -556,34 +615,30 @@ class KiClashGame {
         ctx.fillStyle = '#00e1ff';
         ctx.fillText('SUPER DEVOLUTION ARENA', this.width / 2, 115);
 
-        // Menu Options
         const optY = 190;
         ctx.font = 'bold 19px "Courier New", monospace';
 
-        // 1P vs CPU
         if (this.mode === '1P_CPU') {
             ctx.fillStyle = '#ffe600';
-            ctx.fillText('> 1 PLAYER VS CPU <', this.width / 2, optY);
+            ctx.fillText('> 1 JUGADOR VS CPU <', this.width / 2, optY);
         } else {
             ctx.fillStyle = '#888899';
-            ctx.fillText('  1 PLAYER VS CPU  ', this.width / 2, optY);
+            ctx.fillText('  1 JUGADOR VS CPU  ', this.width / 2, optY);
         }
 
-        // 1P vs 2P Local
         if (this.mode === '1P_2P') {
             ctx.fillStyle = '#ffe600';
-            ctx.fillText('> 2 PLAYERS (LOCAL) <', this.width / 2, optY + 36);
+            ctx.fillText('> 2 JUGADORES (LOCAL) <', this.width / 2, optY + 36);
         } else {
             ctx.fillStyle = '#888899';
-            ctx.fillText('  2 PLAYERS (LOCAL)  ', this.width / 2, optY + 36);
+            ctx.fillText('  2 JUGADORES (LOCAL)  ', this.width / 2, optY + 36);
         }
 
-        // Controls info
         ctx.font = '12px "Courier New", monospace';
         ctx.fillStyle = '#ffffff';
-        ctx.fillText('Use W/S or UP/DOWN to choose - Press ENTER / J to START', this.width / 2, 305);
+        ctx.fillText('Usa W/S o ARRIBA/ABAJO - Pulsa ENTER o J para INICIAR', this.width / 2, 305);
         ctx.fillStyle = '#00e1ff';
-        ctx.fillText('Gamepad / Controller Supported!', this.width / 2, 328);
+        ctx.fillText('Presiona [ESC] o el boton ⚙️ para AJUSTES y CONFIGURAR TECLAS', this.width / 2, 328);
 
         ctx.restore();
     }
@@ -596,9 +651,8 @@ class KiClashGame {
         ctx.font = '900 28px "Courier New", monospace';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#ffe600';
-        ctx.fillText('SELECT YOUR FIGHTER', this.width / 2, 50);
+        ctx.fillText('ELIGE TU LUCHADOR', this.width / 2, 50);
 
-        // Character selection boxes
         const boxWidth = 90;
         const boxHeight = 120;
         const startX = (this.width - (this.charList.length * (boxWidth + 14))) / 2;
@@ -618,19 +672,16 @@ class KiClashGame {
             ctx.lineWidth = (isP1 || isP2) ? 3 : 1.5;
             ctx.strokeRect(bx, by, boxWidth, boxHeight);
 
-            // Preview sprite
             ctx.save();
             const dummy = { charKey: key };
             window.fighterRenderer.draw(ctx, dummy, bx + boxWidth / 2, by + 70, 1, 'idle', Date.now() * 0.005);
             ctx.restore();
 
-            // Name
             ctx.font = 'bold 12px "Courier New", monospace';
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.fillText(char.name, bx + boxWidth / 2, by + 105);
 
-            // Badges
             if (isP1) {
                 ctx.fillStyle = '#00e1ff';
                 ctx.fillText('P1', bx + 16, by + 20);
@@ -641,17 +692,15 @@ class KiClashGame {
             }
         });
 
-        // Stage selector
         ctx.font = 'bold 15px "Courier New", monospace';
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(`STAGE: [T] ${this.currentStage.toUpperCase()}`, this.width / 2, 235);
+        ctx.fillText(`ESCENARIO: [T] ${this.currentStage.toUpperCase()}`, this.width / 2, 235);
 
-        // Control instructions
         ctx.font = '12px "Courier New", monospace';
         ctx.fillStyle = '#00e1ff';
-        ctx.fillText('P1 Select: [A] / [D]   |   P2 Select: [LEFT] / [RIGHT]', this.width / 2, 275);
+        ctx.fillText('P1: [A]/[D] o Izq/Der   |   P2: [FLECHAS] Izq/Der', this.width / 2, 275);
         ctx.fillStyle = '#ffea00';
-        ctx.fillText('Press [ENTER] or [J] to START BATTLE', this.width / 2, 305);
+        ctx.fillText('Pulsa [ENTER] o [J] para PELEAR', this.width / 2, 305);
 
         ctx.restore();
     }
@@ -668,11 +717,11 @@ class KiClashGame {
 
         ctx.font = 'bold 24px "Courier New", monospace';
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(`${this.winner} WINS!`, this.width / 2, 180);
+        ctx.fillText(`${this.winner} GANA!`, this.width / 2, 180);
 
         ctx.font = 'bold 14px "Courier New", monospace';
         ctx.fillStyle = '#00e1ff';
-        ctx.fillText('Press [ENTER] or [J] to Return to Character Select', this.width / 2, 250);
+        ctx.fillText('Pulsa [ENTER] o [J] para volver al selector de personajes', this.width / 2, 250);
         ctx.restore();
     }
 }

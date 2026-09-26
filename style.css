@@ -6,128 +6,123 @@
     -webkit-user-select: none;
 }
 
-body {
-    background-color: #0b0c14;
-    color: #e0e0e0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    overflow-x: hidden;
-    padding: 16px;
-}
-
-.arcade-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: radial-gradient(circle at 50% 20%, #1c2038 0%, #0d0f1c 100%);
-    border: 4px solid #283152;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 225, 255, 0.15);
-    padding: 16px;
-    max-width: 980px;
-    width: 100%;
-}
-
-.cabinet-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #202742;
-    margin-bottom: 12px;
-}
-
-.cabinet-title {
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #ff9900;
-    text-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
-}
-
-.cabinet-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-arcade {
-    background: #1e2640;
-    border: 2px solid #3d4f85;
-    color: #00e1ff;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.btn-arcade:hover {
-    background: #2a375e;
-    border-color: #00e1ff;
-    box-shadow: 0 0 8px rgba(0, 225, 255, 0.4);
-}
-
-.screen-container {
-    position: relative;
-    width: 100%;
-    max-width: 900px;
-    aspect-ratio: 16 / 9;
-    background: #000;
-    border: 3px solid #111422;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9);
-}
-
-canvas {
+html, body {
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    background-color: #000000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0e0e0;
+}
+
+/* Game Wrapper filling full screen / page */
+.game-viewport {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000;
+    overflow: hidden;
+}
+
+/* Canvas filling 100% of viewport preserving 16:9 aspect ratio */
+canvas#gameCanvas {
+    width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
     display: block;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
 
-/* CRT Scanline Filter effect */
+/* CRT Scanline Filter effect overlay */
 .scanlines::after {
     content: " ";
     display: block;
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%);
     background-size: 100% 4px;
-    z-index: 2;
+    z-index: 5;
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
-/* Touch controls for mobile */
+/* Floating Top Control Bar */
+.floating-hud {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.hud-btn {
+    background: rgba(14, 18, 32, 0.85);
+    border: 1.5px solid #2f3b60;
+    color: #00e1ff;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-radius: 6px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.hud-btn:hover {
+    background: rgba(28, 38, 72, 0.95);
+    border-color: #00e1ff;
+    box-shadow: 0 0 10px rgba(0, 225, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.hud-btn.active {
+    background: #00e1ff;
+    color: #000;
+    border-color: #00e1ff;
+}
+
+/* Mobile Touch Controls */
 .touch-controls {
     display: none;
-    width: 100%;
-    margin-top: 14px;
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
     justify-content: space-between;
-    align-items: center;
-    touch-action: none;
+    align-items: flex-end;
+    z-index: 15;
+    pointer-events: none;
+}
+
+.touch-dpad, .touch-actions {
+    pointer-events: auto;
 }
 
 .touch-dpad {
     display: grid;
-    grid-template-columns: repeat(3, 44px);
-    grid-template-rows: repeat(3, 44px);
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 50px);
     gap: 4px;
 }
 
 .touch-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     color: #fff;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
     border-radius: 8px;
     display: flex;
@@ -137,37 +132,302 @@ canvas {
     touch-action: none;
 }
 
+.touch-btn:active {
+    background: rgba(0, 225, 255, 0.5);
+}
+
 .touch-actions {
     display: grid;
-    grid-template-columns: repeat(3, 50px);
+    grid-template-columns: repeat(3, 56px);
     gap: 8px;
 }
 
 .touch-act-btn {
-    width: 50px;
-    height: 50px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     font-size: 11px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-/* Controls Info Legend */
-.controls-guide {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+/* MODAL DE AJUSTES (SETTINGS MODAL) */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(4, 6, 14, 0.88);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.settings-card {
+    background: radial-gradient(circle at 50% 10%, #192038 0%, #0d1020 100%);
+    border: 2px solid #2d3b66;
+    border-radius: 12px;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 225, 255, 0.18);
     width: 100%;
-    margin-top: 16px;
+    max-width: 720px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.controls-card {
-    background: #131726;
-    border: 1px solid #232c47;
-    border-radius: 8px;
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 2px solid #232c4a;
+    background: rgba(10, 14, 28, 0.7);
+}
+
+.settings-title {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: #ff9900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: #8899bb;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.btn-close:hover {
+    color: #ff1744;
+}
+
+/* Navigation Tabs */
+.settings-tabs {
+    display: flex;
+    background: #0e1222;
+    border-bottom: 1px solid #232c4a;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
     padding: 12px 16px;
+    color: #8fa0c0;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
-.controls-card h3 {
+.tab-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tab-btn.active {
+    color: #00e1ff;
+    border-bottom-color: #00e1ff;
+    background: rgba(0, 225, 255, 0.06);
+}
+
+/* Tab Contents Area */
+.settings-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Audio & Graphics Tab */
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #1a2238;
+}
+
+.setting-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.setting-title {
     font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.setting-desc {
+    font-size: 12px;
+    color: #889bb8;
+}
+
+.slider-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+input[type="range"] {
+    accent-color: #00e1ff;
+    cursor: pointer;
+    width: 140px;
+}
+
+.volume-value {
+    font-size: 13px;
+    font-weight: bold;
+    color: #00e1ff;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Switch toggle */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #2b3652;
+    transition: .3s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #00e1ff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+/* Key Remapping Tab */
+.player-toggle-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.btn-player-select {
+    flex: 1;
+    background: #14192b;
+    border: 1.5px solid #2c3859;
+    color: #99aacc;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-player-select.active {
+    background: #1f2a4a;
+    border-color: #00e1ff;
+    color: #00e1ff;
+    box-shadow: 0 0 10px rgba(0, 225, 255, 0.25);
+}
+
+.remap-table {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 16px;
+    align-items: center;
+}
+
+.action-label {
+    font-size: 13px;
+    color: #d0d8e8;
+}
+
+.key-bind-btn {
+    background: #161c30;
+    border: 1.5px solid #364468;
+    color: #ffe600;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 110px;
+    text-align: center;
+    transition: all 0.15s;
+}
+
+.key-bind-btn:hover {
+    border-color: #ffe600;
+    background: #232c48;
+}
+
+.key-bind-btn.recording {
+    background: #ff1744;
+    color: #ffffff;
+    border-color: #ffffff;
+    animation: pulseGlow 0.8s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from { box-shadow: 0 0 5px #ff1744; }
+    to { box-shadow: 0 0 15px #ff1744; }
+}
+
+/* Guide / Legend Tab */
+.guide-section {
+    margin-bottom: 20px;
+}
+
+.guide-title {
+    font-size: 14px;
+    font-weight: bold;
     color: #ff9900;
     margin-bottom: 8px;
     display: flex;
@@ -175,29 +435,76 @@ canvas {
     gap: 6px;
 }
 
-.controls-grid {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 6px 12px;
+.guide-list {
+    list-style: none;
     font-size: 12px;
+    color: #bcc8dc;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 8px;
 }
 
-.key-badge {
-    background: #20273d;
-    border: 1px solid #3f4e75;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-weight: bold;
+.guide-list li strong {
     color: #00e1ff;
-    text-align: center;
+}
+
+.settings-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: rgba(10, 14, 28, 0.7);
+    border-top: 2px solid #232c4a;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #3a476b;
+    color: #a0b2d6;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    border-color: #ff3366;
+    color: #ff3366;
+}
+
+.btn-primary {
+    background: #00e1ff;
+    border: none;
+    color: #050b14;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(0, 225, 255, 0.4);
+}
+
+.btn-primary:hover {
+    background: #4de9ff;
+    box-shadow: 0 0 18px rgba(0, 225, 255, 0.6);
 }
 
 @media (max-width: 768px) {
     .touch-controls {
         display: flex;
     }
-    .controls-guide {
-        grid-template-columns: 1fr;
+    .floating-hud {
+        top: 8px;
+        right: 8px;
+    }
+    .hud-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+    .settings-card {
+        max-height: 95vh;
     }
 }

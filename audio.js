@@ -2,10 +2,21 @@
 class SoundEngine {
     constructor() {
         this.ctx = null;
+        this.masterGain = null;
         this.chargeNode = null;
         this.chargeGain = null;
+        this.chargeLfo = null;
         this.muted = false;
+        this.volume = 0.8;
         this.initialized = false;
+
+        // Load saved settings
+        try {
+            const savedVol = localStorage.getItem('ki_clash_volume');
+            if (savedVol !== null) this.volume = parseFloat(savedVol);
+            const savedMuted = localStorage.getItem('ki_clash_muted');
+            if (savedMuted !== null) this.muted = (savedMuted === 'true');
+        } catch (e) {}
     }
 
     init() {
@@ -13,6 +24,11 @@ class SoundEngine {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         this.ctx = new AudioContext();
+
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.setValueAtTime(this.muted ? 0 : this.volume, this.ctx.currentTime);
+        this.masterGain.connect(this.ctx.destination);
+
         this.initialized = true;
     }
 
@@ -23,10 +39,28 @@ class SoundEngine {
         }
     }
 
+    setVolume(val) {
+        this.volume = Math.max(0, Math.min(1, val));
+        try { localStorage.setItem('ki_clash_volume', this.volume); } catch (e) {}
+        if (this.masterGain && this.ctx && !this.muted) {
+            this.masterGain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
+        }
+    }
+
+    toggleMute() {
+        this.muted = !this.muted;
+        try { localStorage.setItem('ki_clash_muted', this.muted); } catch (e) {}
+        if (this.masterGain && this.ctx) {
+            this.masterGain.gain.setValueAtTime(this.muted ? 0 : this.volume, this.ctx.currentTime);
+        }
+        return this.muted;
+    }
+
     // Hit sound (Light / Combo punch)
     playHit(heavy = false) {
-        if (this.muted || !this.ctx) return;
+        if (this.muted) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
@@ -35,7 +69,6 @@ class SoundEngine {
         osc.frequency.setValueAtTime(heavy ? 180 : 260, now);
         osc.frequency.exponentialRampToValueAtTime(30, now + (heavy ? 0.22 : 0.12));
 
-        // Noise buffer for snap impact
         const bufferSize = this.ctx.sampleRate * (heavy ? 0.08 : 0.04);
         const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
         const output = noiseBuffer.getChannelData(0);
@@ -54,10 +87,10 @@ class SoundEngine {
         gain.gain.exponentialRampToValueAtTime(0.001, now + (heavy ? 0.22 : 0.12));
 
         whiteNoise.connect(noiseGain);
-        noiseGain.connect(this.ctx.destination);
+        noiseGain.connect(this.masterGain);
 
         osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(this.masterGain);
 
         osc.start(now);
         whiteNoise.start(now);
@@ -66,8 +99,9 @@ class SoundEngine {
 
     // Teleport / Dash / Vanish sound
     playVanish() {
-        if (this.muted || !this.ctx) return;
+        if (this.muted) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
@@ -81,7 +115,7 @@ class SoundEngine {
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
 
         osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(this.masterGain);
 
         osc.start(now);
         osc.stop(now + 0.1);
@@ -89,8 +123,9 @@ class SoundEngine {
 
     // Ki blast launch sound
     playKiBlast() {
-        if (this.muted || !this.ctx) return;
+        if (this.muted) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
@@ -103,7 +138,7 @@ class SoundEngine {
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
 
         osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(this.masterGain);
 
         osc.start(now);
         osc.stop(now + 0.14);
@@ -111,8 +146,9 @@ class SoundEngine {
 
     // Blast explosion sound
     playExplosion(large = false) {
-        if (this.muted || !this.ctx) return;
+        if (this.muted) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
         const dur = large ? 0.7 : 0.25;
 
@@ -137,15 +173,16 @@ class SoundEngine {
 
         noise.connect(filter);
         filter.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(this.masterGain);
 
         noise.start(now);
     }
 
     // Beam blast fire
     playBeamFire() {
-        if (this.muted || !this.ctx) return;
+        if (this.muted) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
@@ -159,7 +196,7 @@ class SoundEngine {
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
 
         osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(this.masterGain);
 
         osc.start(now);
         osc.stop(now + 0.8);
@@ -168,8 +205,9 @@ class SoundEngine {
 
     // Start Ki Charging humming loop
     startCharge() {
-        if (this.muted || !this.ctx || this.chargeNode) return;
+        if (this.muted || this.chargeNode) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
 
         const osc = this.ctx.createOscillator();
@@ -183,7 +221,6 @@ class SoundEngine {
         filter.frequency.setValueAtTime(320, now);
         filter.Q.setValueAtTime(4.0, now);
 
-        // LFO for aura pulsing
         const lfo = this.ctx.createOscillator();
         const lfoGain = this.ctx.createGain();
         lfo.frequency.setValueAtTime(9, now);
@@ -196,7 +233,7 @@ class SoundEngine {
 
         osc.connect(filter);
         filter.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(this.masterGain);
 
         osc.start(now);
 
@@ -224,8 +261,9 @@ class SoundEngine {
 
     // Guard / Block sound
     playGuard() {
-        if (this.muted || !this.ctx) return;
+        if (this.muted) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
@@ -238,7 +276,7 @@ class SoundEngine {
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
 
         osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(this.masterGain);
 
         osc.start(now);
         osc.stop(now + 0.08);
@@ -246,8 +284,9 @@ class SoundEngine {
 
     // Round / KO jingle
     playJingle(type) {
-        if (this.muted || !this.ctx) return;
+        if (this.muted) return;
         this.resume();
+        if (!this.ctx || !this.masterGain) return;
         const now = this.ctx.currentTime;
         const notes = type === 'ko' ? [440, 370, 311, 220] : [260, 330, 392, 523];
         const step = 0.12;
@@ -264,7 +303,7 @@ class SoundEngine {
             gain.gain.exponentialRampToValueAtTime(0.001, t + step * 1.5);
 
             osc.connect(gain);
-            gain.connect(this.ctx.destination);
+            gain.connect(this.masterGain);
 
             osc.start(t);
             osc.stop(t + step * 1.5);
