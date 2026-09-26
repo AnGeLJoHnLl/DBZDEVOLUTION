@@ -12,16 +12,20 @@ class KiClashGame {
 
         // Game State: 'MENU', 'SELECT', 'FIGHT', 'GAMEOVER'
         this.state = 'MENU';
-        this.mode = '1P_CPU'; // '1P_CPU' or '1P_2P'
-        this.currentStage = 'tournament'; // 'tournament', 'wasteland', 'namek', 'chamber'
+        this.mode = '1P_CPU';
+        this.currentStage = 'tournament';
         this.isPaused = false;
 
-        // Roster of 16 Iconic Fighters
+        // Roster of 48 Legendary Fighters (4 Rows x 12 Columns)
         this.charList = [
-            'goku', 'vegeta', 'gohan', 'trunks',
-            'piccolo', 'krillin', 'frieza', 'cell',
-            'buu', 'broly', 'black', 'beerus',
-            'vegito', 'gogeta', 'bardock', 'a18'
+            // Row 1: Earth Defenders & Classic Era
+            'goku', 'vegeta', 'gohan', 'trunks', 'piccolo', 'krillin', 'yamcha', 'tien', 'roshi', 'kid_goku', 'tao', 'king_piccolo',
+            // Row 2: Saiyans, Frieza Force & Androids
+            'raditz', 'nappa', 'bardock', 'ginyu', 'recoome', 'zarbon', 'frieza', 'cooler', 'a16', 'a17', 'a18', 'cell',
+            // Row 3: Majin, Fusions & Movie Villains
+            'dabura', 'buu', 'kid_buu', 'majin_vegeta', 'ultimate_gohan', 'gotenks', 'vegito', 'gogeta', 'broly', 'janemba', 'turles', 'bojack',
+            // Row 4: Super, Gods & GT
+            'beerus', 'golden_frieza', 'black', 'hit', 'jiren', 'goku_ui', 'vegeta_ue', 'gohan_beast', 'orange_piccolo', 'ssj4_goku', 'ssj4_vegeta', 'ssj4_gogeta'
         ];
 
         this.selectIndexP1 = 0; // Goku
@@ -138,9 +142,10 @@ class KiClashGame {
                     if (window.soundEngine) window.soundEngine.playHit(true);
                 }
             } else if (this.state === 'SELECT' && !this.isPaused) {
-                // 2x8 Grid Navigation for P1 (W, A, S, D)
-                const COLS = 8;
-                const ROWS = 2;
+                // 4x12 Grid Navigation for P1 (W, A, S, D)
+                const COLS = 12;
+                const ROWS = 4;
+                const TOTAL = COLS * ROWS;
 
                 if (e.code === this.keyBindings.p1.left || e.code === 'KeyA') {
                     const row = Math.floor(this.selectIndexP1 / COLS);
@@ -154,13 +159,17 @@ class KiClashGame {
                     this.selectIndexP1 = row * COLS + ((col + 1) % COLS);
                     this.p1Char = this.charList[this.selectIndexP1];
                     if (window.soundEngine) window.soundEngine.playHit(false);
-                } else if (e.code === this.keyBindings.p1.up || e.code === 'KeyW' || e.code === this.keyBindings.p1.down || e.code === 'KeyS') {
-                    this.selectIndexP1 = (this.selectIndexP1 + COLS) % (COLS * ROWS);
+                } else if (e.code === this.keyBindings.p1.up || e.code === 'KeyW') {
+                    this.selectIndexP1 = (this.selectIndexP1 - COLS + TOTAL) % TOTAL;
+                    this.p1Char = this.charList[this.selectIndexP1];
+                    if (window.soundEngine) window.soundEngine.playHit(false);
+                } else if (e.code === this.keyBindings.p1.down || e.code === 'KeyS') {
+                    this.selectIndexP1 = (this.selectIndexP1 + COLS) % TOTAL;
                     this.p1Char = this.charList[this.selectIndexP1];
                     if (window.soundEngine) window.soundEngine.playHit(false);
                 }
 
-                // 2x8 Grid Navigation for P2 (Arrow Keys)
+                // 4x12 Grid Navigation for P2 (Arrow Keys)
                 if (e.code === this.keyBindings.p2.left || e.code === 'ArrowLeft') {
                     const row = Math.floor(this.selectIndexP2 / COLS);
                     const col = this.selectIndexP2 % COLS;
@@ -173,8 +182,12 @@ class KiClashGame {
                     this.selectIndexP2 = row * COLS + ((col + 1) % COLS);
                     this.p2Char = this.charList[this.selectIndexP2];
                     if (window.soundEngine) window.soundEngine.playHit(false);
-                } else if (e.code === this.keyBindings.p2.up || e.code === 'ArrowUp' || e.code === this.keyBindings.p2.down || e.code === 'ArrowDown') {
-                    this.selectIndexP2 = (this.selectIndexP2 + COLS) % (COLS * ROWS);
+                } else if (e.code === this.keyBindings.p2.up || e.code === 'ArrowUp') {
+                    this.selectIndexP2 = (this.selectIndexP2 - COLS + TOTAL) % TOTAL;
+                    this.p2Char = this.charList[this.selectIndexP2];
+                    if (window.soundEngine) window.soundEngine.playHit(false);
+                } else if (e.code === this.keyBindings.p2.down || e.code === 'ArrowDown') {
+                    this.selectIndexP2 = (this.selectIndexP2 + COLS) % TOTAL;
                     this.p2Char = this.charList[this.selectIndexP2];
                     if (window.soundEngine) window.soundEngine.playHit(false);
                 }
@@ -195,6 +208,66 @@ class KiClashGame {
                 if (e.code === 'Enter' || e.code === this.keyBindings.p1.attack || e.code === 'KeyJ') {
                     this.state = 'SELECT';
                 }
+            }
+        });
+
+        // Mouse click and touchscreen selection support
+        this.canvas.addEventListener('click', (e) => {
+            if (this.isPaused) return;
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.width / rect.width;
+            const scaleY = this.height / rect.height;
+            const mx = (e.clientX - rect.left) * scaleX;
+            const my = (e.clientY - rect.top) * scaleY;
+
+            if (this.state === 'TITLE') {
+                if (my >= 220 && my <= 270) {
+                    this.mode = my < 245 ? '1P_CPU' : '2P_LOCAL';
+                }
+                this.state = 'SELECT';
+                if (window.soundEngine) window.soundEngine.playHit(true);
+            } else if (this.state === 'SELECT') {
+                const COLS = 12;
+                const ROWS = 4;
+                const boxW = 44;
+                const boxH = 42;
+                const gapX = 3;
+                const gapY = 3;
+                const totalW = COLS * boxW + (COLS - 1) * gapX;
+                const startX = Math.floor((this.width - totalW) / 2);
+                const startY = 24;
+
+                if (mx >= startX && mx <= startX + totalW && my >= startY && my <= startY + ROWS * (boxH + gapY)) {
+                    const c = Math.floor((mx - startX) / (boxW + gapX));
+                    const r = Math.floor((my - startY) / (boxH + gapY));
+                    if (c >= 0 && c < COLS && r >= 0 && r < ROWS) {
+                        const idx = r * COLS + c;
+                        if (idx < this.charList.length) {
+                            if (e.shiftKey) {
+                                this.selectIndexP2 = idx;
+                                this.p2Char = this.charList[this.selectIndexP2];
+                            } else {
+                                this.selectIndexP1 = idx;
+                                this.p1Char = this.charList[this.selectIndexP1];
+                            }
+                            if (window.soundEngine) window.soundEngine.playHit(false);
+                        }
+                    }
+                } else if (my >= 208 && my <= 354) {
+                    if (mx >= 206 && mx <= 434) {
+                        if (my >= 295) {
+                            this.startFight();
+                        } else {
+                            const stages = ['tournament', 'wasteland', 'namek', 'chamber'];
+                            const sIdx = (stages.indexOf(this.currentStage) + 1) % stages.length;
+                            this.currentStage = stages[sIdx];
+                            if (window.soundEngine) window.soundEngine.playHit(false);
+                        }
+                    }
+                }
+            } else if (this.state === 'GAMEOVER') {
+                this.state = 'SELECT';
+                if (window.soundEngine) window.soundEngine.playHit(false);
             }
         });
 
@@ -618,7 +691,7 @@ class KiClashGame {
 
         ctx.font = 'bold 15px "Courier New", monospace';
         ctx.fillStyle = '#00e1ff';
-        ctx.fillText('SUPER DEVOLUTION ARENA (16 LUCHADORES)', this.width / 2, 110);
+        ctx.fillText('SUPER DEVOLUTION ARENA (32 LUCHADORES)', this.width / 2, 110);
 
         const optY = 185;
         ctx.font = 'bold 19px "Courier New", monospace';
@@ -650,140 +723,173 @@ class KiClashGame {
 
     renderSelect(ctx) {
         ctx.save();
-        ctx.fillStyle = 'rgba(8, 10, 22, 0.9)';
+        ctx.fillStyle = 'rgba(6, 8, 18, 0.94)';
         ctx.fillRect(0, 0, this.width, this.height);
 
-        // Header
-        ctx.font = '900 22px "Courier New", monospace';
+        // Header Title
+        ctx.font = '900 15px "Courier New", monospace';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#ffe600';
-        ctx.fillText('ELIGE TU LUCHADOR (16 PERSONAJES)', this.width / 2, 32);
+        ctx.fillText('★ GRAN TORNEO MULTIVERSAL (48 LUCHADORES) ★', this.width / 2, 17);
 
-        // 2x8 Character Selection Matrix
-        const COLS = 8;
-        const boxW = 56;
-        const boxH = 68;
-        const gapX = 6;
-        const gapY = 6;
+        // 4x12 Character Selection Matrix
+        const COLS = 12;
+        const ROWS = 4;
+        const boxW = 44;
+        const boxH = 42;
+        const gapX = 3;
+        const gapY = 3;
         const totalW = COLS * boxW + (COLS - 1) * gapX;
-        const startX = (this.width - totalW) / 2;
-        const startY = 48;
+        const startX = Math.floor((this.width - totalW) / 2);
+        const startY = 24;
 
         this.charList.forEach((key, idx) => {
             const row = Math.floor(idx / COLS);
             const col = idx % COLS;
             const bx = startX + col * (boxW + gapX);
             const by = startY + row * (boxH + gapY);
-            const char = FighterRenderer.CHARACTERS[key];
+            const char = FighterRenderer.CHARACTERS[key] || FighterRenderer.CHARACTERS.goku;
 
             const isP1 = (this.selectIndexP1 === idx);
             const isP2 = (this.selectIndexP2 === idx);
 
             // Card background
-            ctx.fillStyle = (isP1 || isP2) ? '#24325c' : '#121626';
+            ctx.fillStyle = (isP1 || isP2) ? '#283660' : '#111524';
             ctx.fillRect(bx, by, boxW, boxH);
 
             // Card border
-            ctx.strokeStyle = isP1 && isP2 ? '#ffea00' : (isP1 ? '#00e1ff' : (isP2 ? '#ff1744' : '#333b54'));
-            ctx.lineWidth = (isP1 || isP2) ? 2.5 : 1;
+            ctx.strokeStyle = isP1 && isP2 ? '#ffea00' : (isP1 ? '#00e1ff' : (isP2 ? '#ff1744' : '#262f44'));
+            ctx.lineWidth = (isP1 || isP2) ? 2 : 1;
             ctx.strokeRect(bx, by, boxW, boxH);
 
             // Character miniature sprite
             ctx.save();
             const dummy = { charKey: key };
-            window.fighterRenderer.draw(ctx, dummy, bx + boxW / 2, by + 40, 1, 'idle', Date.now() * 0.005);
+            window.fighterRenderer.draw(ctx, dummy, bx + boxW / 2, by + 26, 1, 'idle', Date.now() * 0.005);
             ctx.restore();
 
             // Name
-            ctx.font = 'bold 8.5px "Courier New", monospace';
-            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 6.8px "Courier New", monospace';
+            ctx.fillStyle = (isP1 || isP2) ? '#ffe600' : '#d0d8e8';
             ctx.textAlign = 'center';
-            ctx.fillText(char.name.split(' ')[0], bx + boxW / 2, by + 60);
+            let shortName = char.name
+                .replace('(SSJ2)', 'SS2')
+                .replace('(U.I.)', 'UI')
+                .replace('(U.E.)', 'UE')
+                .replace('(SSJ3)', 'SS3')
+                .replace('MASTER ', 'M.')
+                .replace('MERCENARY ', '')
+                .replace('ANDROID ', 'A-')
+                .replace('ULTIMATE ', 'ULT.')
+                .replace('GOLDEN ', 'G.')
+                .replace('ORANGE ', 'O.')
+                .replace('KING ', 'K.');
+            ctx.fillText(shortName.substring(0, 9), bx + boxW / 2, by + 39);
 
             // Badges
             if (isP1) {
                 ctx.fillStyle = '#00e1ff';
-                ctx.font = 'bold 10px monospace';
-                ctx.fillText('P1', bx + 12, by + 13);
+                ctx.font = 'bold 8px monospace';
+                ctx.fillText('P1', bx + 7, by + 8);
             }
             if (isP2) {
                 ctx.fillStyle = '#ff1744';
-                ctx.font = 'bold 10px monospace';
-                ctx.fillText(this.mode === '1P_CPU' ? 'CPU' : 'P2', bx + boxW - 14, by + 13);
+                ctx.font = 'bold 8px monospace';
+                ctx.fillText(this.mode === '1P_CPU' ? 'CPU' : 'P2', bx + boxW - 8, by + 8);
             }
         });
 
-        // Large Preview Panels for P1 and P2 below grid
-        const panelY = 205;
-        const p1Data = FighterRenderer.CHARACTERS[this.p1Char];
-        const p2Data = FighterRenderer.CHARACTERS[this.p2Char];
+        // Large Preview Panels for P1, Stage and P2 below the 4x12 grid
+        const panelY = 208;
+        const panelH = 146;
+        const p1Data = FighterRenderer.CHARACTERS[this.p1Char] || FighterRenderer.CHARACTERS.goku;
+        const p2Data = FighterRenderer.CHARACTERS[this.p2Char] || FighterRenderer.CHARACTERS.vegeta;
 
         // P1 Panel (Left)
-        ctx.fillStyle = '#101529';
-        ctx.fillRect(24, panelY, 175, 130);
+        ctx.fillStyle = '#0e1326';
+        ctx.fillRect(16, panelY, 185, panelH);
         ctx.strokeStyle = '#00e1ff';
         ctx.lineWidth = 1.5;
-        ctx.strokeRect(24, panelY, 175, 130);
+        ctx.strokeRect(16, panelY, 185, panelH);
 
         ctx.save();
         const dummyP1 = { charKey: this.p1Char };
-        window.fighterRenderer.draw(ctx, dummyP1, 65, panelY + 65, 1, 'idle', Date.now() * 0.005);
+        window.fighterRenderer.draw(ctx, dummyP1, 52, panelY + 68, 1, 'idle', Date.now() * 0.005);
         ctx.restore();
 
         ctx.textAlign = 'left';
-        ctx.font = 'bold 12px "Courier New", monospace';
+        ctx.font = 'bold 11px "Courier New", monospace';
         ctx.fillStyle = '#00e1ff';
-        ctx.fillText(p1Data.name, 95, panelY + 35);
-        ctx.font = '10px "Courier New", monospace';
+        ctx.fillText(p1Data.name, 84, panelY + 28);
+        ctx.font = '9px "Courier New", monospace';
         ctx.fillStyle = '#a0b5d8';
-        ctx.fillText(p1Data.title, 95, panelY + 52);
+        ctx.fillText(p1Data.title, 84, panelY + 44);
         ctx.fillStyle = '#ffe600';
-        ctx.fillText('★ ' + p1Data.specialName, 35, panelY + 110);
+        ctx.fillText('★ ' + p1Data.specialName, 24, panelY + 128);
+
+        // Beam preview indicator for P1
+        ctx.fillStyle = p1Data.beamColor || '#00e1ff';
+        ctx.fillRect(24, panelY + 133, 40, 3);
+        ctx.fillStyle = p1Data.beamCore || '#ffffff';
+        ctx.fillRect(24, panelY + 134, 40, 1);
 
         // P2 / CPU Panel (Right)
-        ctx.fillStyle = '#101529';
-        ctx.fillRect(this.width - 24 - 175, panelY, 175, 130);
+        ctx.fillStyle = '#0e1326';
+        ctx.fillRect(this.width - 16 - 185, panelY, 185, panelH);
         ctx.strokeStyle = '#ff1744';
         ctx.lineWidth = 1.5;
-        ctx.strokeRect(this.width - 24 - 175, panelY, 175, 130);
+        ctx.strokeRect(this.width - 16 - 185, panelY, 185, panelH);
 
         ctx.save();
         const dummyP2 = { charKey: this.p2Char };
-        window.fighterRenderer.draw(ctx, dummyP2, this.width - 65, panelY + 65, -1, 'idle', Date.now() * 0.005);
+        window.fighterRenderer.draw(ctx, dummyP2, this.width - 52, panelY + 68, -1, 'idle', Date.now() * 0.005);
         ctx.restore();
 
         ctx.textAlign = 'right';
-        ctx.font = 'bold 12px "Courier New", monospace';
+        ctx.font = 'bold 11px "Courier New", monospace';
         ctx.fillStyle = '#ff1744';
-        ctx.fillText(p2Data.name + (this.mode === '1P_CPU' ? ' (CPU)' : ''), this.width - 95, panelY + 35);
-        ctx.font = '10px "Courier New", monospace';
+        ctx.fillText(p2Data.name + (this.mode === '1P_CPU' ? ' (CPU)' : ''), this.width - 84, panelY + 28);
+        ctx.font = '9px "Courier New", monospace';
         ctx.fillStyle = '#a0b5d8';
-        ctx.fillText(p2Data.title, this.width - 95, panelY + 52);
+        ctx.fillText(p2Data.title, this.width - 84, panelY + 44);
         ctx.fillStyle = '#ffe600';
-        ctx.fillText('★ ' + p2Data.specialName, this.width - 35, panelY + 110);
+        ctx.fillText('★ ' + p2Data.specialName, this.width - 24, panelY + 128);
+
+        // Beam preview indicator for P2
+        ctx.fillStyle = p2Data.beamColor || '#ff0055';
+        ctx.fillRect(this.width - 64, panelY + 133, 40, 3);
+        ctx.fillStyle = p2Data.beamCore || '#ffffff';
+        ctx.fillRect(this.width - 64, panelY + 134, 40, 1);
 
         // Center Stage Box
-        ctx.fillStyle = '#141829';
-        ctx.fillRect(215, panelY, 210, 130);
+        ctx.fillStyle = '#111629';
+        ctx.fillRect(206, panelY, 228, panelH);
         ctx.strokeStyle = '#d4af37';
         ctx.lineWidth = 1.5;
-        ctx.strokeRect(215, panelY, 210, 130);
+        ctx.strokeRect(206, panelY, 228, panelH);
 
         ctx.textAlign = 'center';
-        ctx.font = 'bold 13px "Courier New", monospace';
+        ctx.font = 'bold 12px "Courier New", monospace';
         ctx.fillStyle = '#ffe600';
-        ctx.fillText(`ESCENARIO: [T]`, 320, panelY + 28);
+        ctx.fillText(`ESCENARIO: [T] o CLICK`, 320, panelY + 26);
+        ctx.font = 'bold 13px "Courier New", monospace';
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(this.currentStage.toUpperCase(), 320, panelY + 48);
+        ctx.fillText(this.currentStage.toUpperCase(), 320, panelY + 46);
 
-        ctx.font = '10px "Courier New", monospace';
+        ctx.font = '9px "Courier New", monospace';
         ctx.fillStyle = '#8fa0c0';
-        ctx.fillText('Usa W/A/S/D o Flechas', 320, panelY + 80);
-        ctx.fillText('para moverte en la cuadrícula', 320, panelY + 94);
+        ctx.fillText('Haz click en cualquier personaje', 320, panelY + 74);
+        ctx.fillText('o usa W/A/S/D o Flechas (4x12)', 320, panelY + 88);
 
-        ctx.font = 'bold 11px "Courier New", monospace';
+        // Fight Button
+        ctx.fillStyle = '#1a3355';
+        ctx.fillRect(226, panelY + 104, 188, 30);
+        ctx.strokeStyle = '#00e1ff';
+        ctx.strokeRect(226, panelY + 104, 188, 30);
+
+        ctx.font = 'bold 12px "Courier New", monospace';
         ctx.fillStyle = '#00e1ff';
-        ctx.fillText('Pulsa [ENTER] o [J] para PELEAR', 320, panelY + 116);
+        ctx.fillText('▶ PULSA ENTER / J: PELEAR ◀', 320, panelY + 123);
 
         ctx.restore();
     }
