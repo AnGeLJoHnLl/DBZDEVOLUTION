@@ -6,7 +6,7 @@ class FighterRenderer {
         this.cache = new Map();
     }
 
-    // Palette configurations for iconic retro anime archetype styles
+    // 16 Iconic Retro Anime Fighters
     static CHARACTERS = {
         goku: {
             name: 'GOKU',
@@ -40,15 +40,51 @@ class FighterRenderer {
             beltColor: '#c59420',
             wristColor: '#ffffff',    // White gloves
             bootsColor: '#ffffff',    // White boots
-            auraColor: '#a800ff',     // Purple aura
+            auraColor: '#b400ff',     // Purple aura
             specialName: 'GALICK GUN',
             beamColor: '#b400ff',
             beamCore: '#ffffff'
         },
+        gohan: {
+            name: 'GOHAN (SSJ2)',
+            title: 'Hidden Potential',
+            hairColor: '#ffe600',     // Golden SSJ2 hair
+            hairHighlight: '#fff899',
+            hairType: 'ssj_gohan',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#531b7a',       // Purple piccolo gi
+            giUndershirt: null,
+            beltColor: '#c91e1e',     // Red sash
+            wristColor: '#c91e1e',
+            bootsColor: '#966028',
+            auraColor: '#ffe600',
+            specialName: 'MASENKO',
+            beamColor: '#ffe600',
+            beamCore: '#ffffff'
+        },
+        trunks: {
+            name: 'TRUNKS',
+            title: 'Future Warrior',
+            hairColor: '#9c7cb8',     // Purple parted hair
+            hairHighlight: '#c2a8dc',
+            hairType: 'trunks_parted',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#1f2026',       // Black tank top
+            jacketColor: '#2b3a6b',   // Blue Capsule Corp jacket
+            beltColor: '#d69e2e',
+            wristColor: '#1f2026',
+            bootsColor: '#c9a13b',    // Yellow boots
+            auraColor: '#ffe600',
+            specialName: 'BURNING ATTACK',
+            beamColor: '#ff9900',
+            beamCore: '#fff8a6'
+        },
         piccolo: {
             name: 'PICCOLO',
             title: 'Namekian Master',
-            hairColor: null,          // Bald with antenna & ears
+            hairColor: null,
             hairType: 'namek_turban',
             skinColor: '#54b848',     // Green skin
             skinShade: '#388a2e',
@@ -56,10 +92,27 @@ class FighterRenderer {
             beltColor: '#45b8eb',     // Cyan obi sash
             wristColor: '#d62432',    // Red wristbands
             bootsColor: '#966028',    // Brown shoes
-            auraColor: '#ffe600',     // Golden-yellow aura
+            auraColor: '#ffe600',
             specialName: 'SPECIAL BEAM',
             beamColor: '#ffe600',
             beamCore: '#ff2255'
+        },
+        krillin: {
+            name: 'KRILLIN',
+            title: 'Earth Brave',
+            hairColor: null,
+            hairType: 'krillin_bald',
+            skinColor: '#ffd1a4',
+            skinShade: '#e0a070',
+            giColor: '#ff5500',       // Orange gi
+            giUndershirt: '#0033aa',
+            beltColor: '#0033aa',
+            wristColor: '#0033aa',
+            bootsColor: '#0033aa',
+            auraColor: '#ffffff',
+            specialName: 'KIEZAN DISC',
+            beamColor: '#fff200',
+            beamCore: '#ffffff'
         },
         frieza: {
             name: 'FRIEZA',
@@ -76,19 +129,171 @@ class FighterRenderer {
             specialName: 'DEATH BEAM',
             beamColor: '#ff0066',
             beamCore: '#ffffff'
+        },
+        cell: {
+            name: 'CELL',
+            title: 'Perfect Being',
+            hairColor: null,
+            hairType: 'cell_crown',
+            skinColor: '#46a33f',     // Green spotted chitin
+            skinShade: '#2f7529',
+            giColor: '#181a18',       // Black carapace torso & wings
+            beltColor: '#45b8eb',     // Blue jewel
+            wristColor: '#181a18',
+            bootsColor: '#c59420',    // Gold striped feet
+            auraColor: '#ffe600',
+            specialName: 'PERFECT BEAM',
+            beamColor: '#00e1ff',
+            beamCore: '#ffea00'
+        },
+        buu: {
+            name: 'MAJIN BUU',
+            title: 'Ancient Terror',
+            hairColor: null,
+            hairType: 'buu_head',
+            skinColor: '#ff77aa',     // Bubblegum pink skin
+            skinShade: '#d64d80',
+            giColor: '#f5f5f5',       // White baggy pants
+            vestColor: '#18181f',     // Black vest with gold trim
+            beltColor: '#d69e2e',     // Gold 'M' belt
+            wristColor: '#d69e2e',    // Gold arm bands
+            bootsColor: '#7a4214',    // Brown boots
+            auraColor: '#ff3399',
+            specialName: 'VANISHING BALL',
+            beamColor: '#ff3399',
+            beamCore: '#ffffff'
+        },
+        broly: {
+            name: 'BROLY',
+            title: 'Legendary Saiyan',
+            hairColor: '#96ff00',     // Neon lime green hair
+            hairHighlight: '#d4ff80',
+            hairType: 'broly_wild',
+            skinColor: '#ffd1a4',
+            skinShade: '#e5a578',
+            giColor: '#e0f0f5',       // White pants
+            beltColor: '#b81424',     // Red sash
+            wristColor: '#d4af37',    // Gold cuffs
+            bootsColor: '#1f2026',    // Dark boots with gold cuffs
+            auraColor: '#39ff14',     // Neon green aura
+            specialName: 'ERASER CANNON',
+            beamColor: '#39ff14',
+            beamCore: '#ffffff'
+        },
+        black: {
+            name: 'GOKU BLACK',
+            title: 'Divine Rose',
+            hairColor: '#ff77a8',     // Super Saiyan Rose pink
+            hairHighlight: '#ffa6c7',
+            hairType: 'black_rose',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#2b2b30',       // Dark grey gi
+            giUndershirt: '#151518',  // Black long sleeves
+            beltColor: '#b81424',     // Red sash
+            wristColor: '#151518',
+            bootsColor: '#ffffff',    // White boots
+            auraColor: '#9900ee',     // Dark violet/magenta aura
+            specialName: 'BLACK KAMEHA',
+            beamColor: '#b800e6',
+            beamCore: '#ff66cc'
+        },
+        beerus: {
+            name: 'BEERUS',
+            title: 'Destruction God',
+            hairColor: null,
+            hairType: 'beerus_cat',
+            skinColor: '#926bb5',     // Purple sphinx cat
+            skinShade: '#724e94',
+            giColor: '#141724',       // Black / turquoise pants
+            collarColor: '#258f9c',   // Egyptian turquoise collar with stripes
+            beltColor: '#258f9c',
+            wristColor: '#d4af37',    // Gold arm bands
+            bootsColor: '#8a4b1f',    // Brown shoes
+            auraColor: '#ff4500',     // Solar flame aura
+            specialName: 'HAKAI BEAM',
+            beamColor: '#ff4500',
+            beamCore: '#7a00ff'
+        },
+        vegito: {
+            name: 'VEGITO',
+            title: 'Ultimate Potara',
+            hairColor: '#1a1820',
+            hairHighlight: '#3c354a',
+            hairType: 'vegito_spikes',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#08338f',       // Blue gi
+            giUndershirt: '#ff5500',  // Orange undershirt
+            beltColor: '#08338f',
+            wristColor: '#ffffff',    // White gloves
+            bootsColor: '#ffffff',    // White boots
+            auraColor: '#00ffff',     // Electric cyan aura
+            specialName: 'FINAL KAMEHA',
+            beamColor: '#00ffff',
+            beamCore: '#ffee00'
+        },
+        gogeta: {
+            name: 'GOGETA',
+            title: 'Fusion Supreme',
+            hairColor: '#111115',
+            hairHighlight: '#2c2d38',
+            hairType: 'gogeta_spikes',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#ffffff',       // White baggy pants
+            vestColor: '#18181f',     // Black Metamoran vest
+            paddingColor: '#ff8800',  // Orange neck/shoulder padding
+            beltColor: '#00ccff',     // Cyan sash
+            wristColor: '#18181f',
+            bootsColor: '#18181f',
+            auraColor: '#00e5ff',     // Stardust rainbow/cyan aura
+            specialName: 'BIG BANG BEAM',
+            beamColor: '#00e5ff',
+            beamCore: '#ffffff'
+        },
+        bardock: {
+            name: 'BARDOCK',
+            title: 'Lone Rebel',
+            hairColor: '#111115',
+            hairHighlight: '#2c2d38',
+            hairType: 'bardock_spikes',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#151518',       // Dark bodysuit
+            armorChest: '#184724',    // Green battle armor
+            armorStrap: '#40994d',    // Light green straps
+            beltColor: '#151518',
+            wristColor: '#b81424',    // Red wristbands
+            bootsColor: '#184724',
+            auraColor: '#0066ff',     // Deep blue aura
+            specialName: 'SPIRIT CANNON',
+            beamColor: '#0066ff',
+            beamCore: '#ffffff'
+        },
+        a18: {
+            name: 'ANDROID 18',
+            title: 'Infinite Power',
+            hairColor: '#ffd700',     // Blonde bob
+            hairHighlight: '#fff8a6',
+            hairType: 'a18_bob',
+            skinColor: '#ffe0bd',
+            skinShade: '#e8be99',
+            giColor: '#1f253d',       // Denim skirt/vest
+            giUndershirt: '#111111',  // Striped black/white sleeves
+            beltColor: '#7a5230',     // Brown belt with gold buckle
+            wristColor: '#ffe0bd',
+            bootsColor: '#7a5230',    // Brown boots
+            auraColor: '#ffd700',     // Golden energy aura
+            specialName: 'INFINITY WAVE',
+            beamColor: '#ffe600',
+            beamCore: '#ffffff'
         }
     };
 
-    drawPixel(ctx, x, y, size, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(Math.floor(x), Math.floor(y), size, size);
-    }
-
-    // Main rendering entry point for a fighter
     draw(ctx, fighter, x, y, facing, state, animFrame) {
         const char = FighterRenderer.CHARACTERS[fighter.charKey] || FighterRenderer.CHARACTERS.goku;
-        const scale = 2.4; // Pixel scale
-        const pSize = scale;
+        const pSize = 2.4;
 
         ctx.save();
         ctx.translate(Math.floor(x), Math.floor(y));
@@ -123,7 +328,6 @@ class FighterRenderer {
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        // Jagged energy aura shape
         ctx.moveTo(0, -38 - pulse);
         ctx.lineTo(18 + pulse, -12);
         ctx.lineTo(26 + pulse, 14);
@@ -142,7 +346,6 @@ class FighterRenderer {
         let bobY = 0;
         let legOffset = 0;
         let punchExtend = 0;
-        let kickAngle = 0;
         let headTilt = 0;
         let armPose = 'normal';
 
@@ -172,7 +375,6 @@ class FighterRenderer {
                 armPose = 'punch_cross';
                 break;
             case 'kick':
-                kickAngle = 1;
                 legOffset = 9;
                 armPose = 'kick_balance';
                 break;
@@ -216,7 +418,7 @@ class FighterRenderer {
         // 2. TORSO & GI/ARMOR
         this.drawTorso(ctx, char, p, originY, state);
 
-        // 3. ARMS / HANDS (Back and Front)
+        // 3. ARMS / HANDS
         this.drawArms(ctx, char, p, originY, armPose, punchExtend);
 
         // 4. HEAD, FACE & HAIR
@@ -225,7 +427,7 @@ class FighterRenderer {
         // Guard barrier effect if blocking
         if (state === 'guard') {
             ctx.save();
-            ctx.strokeStyle = '#00f0ff';
+            ctx.strokeStyle = char.auraColor || '#00f0ff';
             ctx.lineWidth = 2.5;
             ctx.beginPath();
             ctx.arc(8, originY + 8, 18, -Math.PI * 0.45, Math.PI * 0.45);
@@ -242,10 +444,8 @@ class FighterRenderer {
         const legY = originY + 14;
 
         if (state === 'kick') {
-            // High kick leg
             ctx.fillStyle = pantColor;
             ctx.fillRect(leftLegX, legY, 6, 9);
-            // Extended right leg
             ctx.fillRect(rightLegX, legY - 6, 12, 6);
             ctx.fillStyle = bootColor;
             ctx.fillRect(leftLegX, legY + 9, 6, 4);
@@ -253,13 +453,11 @@ class FighterRenderer {
             return;
         }
 
-        // Left leg
         ctx.fillStyle = pantColor;
         ctx.fillRect(leftLegX, legY, 6, 8);
         ctx.fillStyle = bootColor;
         ctx.fillRect(leftLegX - 1, legY + 8, 7, 4);
 
-        // Right leg
         ctx.fillStyle = pantColor;
         ctx.fillRect(rightLegX, legY, 6, 8);
         ctx.fillStyle = bootColor;
@@ -273,52 +471,73 @@ class FighterRenderer {
         const height = 12;
 
         if (char.armorChest) {
-            // Vegeta Armor style
-            ctx.fillStyle = char.giColor; // Blue bodysuit
+            ctx.fillStyle = char.giColor;
             ctx.fillRect(chestX, chestY, width, height);
 
-            ctx.fillStyle = char.armorChest; // White armor vest
+            ctx.fillStyle = char.armorChest;
             ctx.fillRect(chestX + 1, chestY, width - 2, height - 2);
 
-            ctx.fillStyle = char.armorStrap; // Gold straps / stomach lines
+            ctx.fillStyle = char.armorStrap || '#c59420';
             ctx.fillRect(chestX + 3, chestY + 1, 3, 4);
             ctx.fillRect(chestX + 8, chestY + 1, 3, 4);
             ctx.fillRect(chestX + 2, chestY + 6, width - 4, 3);
+        } else if (char.vestColor) {
+            // Metamoran Fusion Vest (Gogeta) or Majin Buu vest
+            ctx.fillStyle = char.skinColor;
+            ctx.fillRect(chestX + 3, chestY, width - 6, height);
+
+            ctx.fillStyle = char.vestColor;
+            ctx.fillRect(chestX, chestY, 4, height);
+            ctx.fillRect(chestX + width - 4, chestY, 4, height);
+
+            if (char.paddingColor) {
+                ctx.fillStyle = char.paddingColor;
+                ctx.fillRect(chestX - 2, chestY, 4, 5);
+                ctx.fillRect(chestX + width - 2, chestY, 4, 5);
+            }
+            if (char.beltColor) {
+                ctx.fillStyle = char.beltColor;
+                ctx.fillRect(chestX, chestY + height - 3, width, 3);
+            }
         } else {
-            // Goku / Piccolo Gi style
             ctx.fillStyle = char.giUndershirt || char.giColor;
             ctx.fillRect(chestX, chestY, width, height);
 
             ctx.fillStyle = char.giColor;
             ctx.fillRect(chestX + 1, chestY, width - 2, height - 1);
 
-            // V-neck cut
             ctx.fillStyle = char.skinColor;
             ctx.fillRect(chestX + 5, chestY, 4, 3);
 
-            // Obi / Belt
-            ctx.fillStyle = char.beltColor;
-            ctx.fillRect(chestX, chestY + height - 3, width, 3);
+            if (char.beltColor) {
+                ctx.fillStyle = char.beltColor;
+                ctx.fillRect(chestX, chestY + height - 3, width, 3);
+            }
+        }
+
+        // Cell Wings on back
+        if (char.name === 'CELL') {
+            ctx.fillStyle = '#111115';
+            ctx.fillRect(chestX - 6, chestY - 4, 4, 14);
+            ctx.fillRect(chestX + width + 2, chestY - 4, 4, 14);
         }
     }
 
     drawArms(ctx, char, p, originY, pose, punchExtend) {
         const skin = char.skinColor;
-        const wrist = char.wristColor;
-        const gi = char.giColor;
+        const wrist = char.wristColor || char.skinColor;
+        const gi = char.jacketColor || char.giUndershirt || char.giColor;
         const armY = originY + 5;
 
         switch (pose) {
             case 'punch_jab':
             case 'punch_cross':
             case 'heavy_smash':
-                // Back arm tucked
                 ctx.fillStyle = gi;
                 ctx.fillRect(-9, armY, 4, 6);
                 ctx.fillStyle = wrist;
                 ctx.fillRect(-9, armY + 6, 4, 3);
 
-                // Extended punch arm
                 ctx.fillStyle = gi;
                 ctx.fillRect(3, armY - 1, 6 + punchExtend * 0.5, 5);
                 ctx.fillStyle = skin;
@@ -328,7 +547,6 @@ class FighterRenderer {
                 break;
 
             case 'charge_flex':
-                // Clenched bent arms
                 ctx.fillStyle = gi;
                 ctx.fillRect(-11, armY, 4, 7);
                 ctx.fillRect(7, armY, 4, 7);
@@ -339,7 +557,6 @@ class FighterRenderer {
 
             case 'two_hand_beam':
             case 'palm_blast':
-                // Both hands forward firing beam
                 ctx.fillStyle = gi;
                 ctx.fillRect(1, armY - 2, 7, 5);
                 ctx.fillStyle = skin;
@@ -349,14 +566,13 @@ class FighterRenderer {
                 break;
 
             case 'cross_guard':
-                // Arms crossed in front of chest
                 ctx.fillStyle = gi;
                 ctx.fillRect(0, armY, 7, 7);
                 ctx.fillStyle = wrist;
                 ctx.fillRect(2, armY + 1, 6, 5);
                 break;
 
-            default: // Guard ready / Normal
+            default:
                 ctx.fillStyle = gi;
                 ctx.fillRect(-9, armY, 4, 6);
                 ctx.fillRect(5, armY, 4, 6);
@@ -373,105 +589,222 @@ class FighterRenderer {
         const skin = char.skinColor;
         const shade = char.skinShade;
 
-        // Face shape
         ctx.fillStyle = skin;
         ctx.fillRect(headX, headY, 14, 13);
         ctx.fillRect(headX + 1, headY + 13, 12, 2);
 
-        // Chin shade
         ctx.fillStyle = shade;
         ctx.fillRect(headX + 3, headY + 13, 8, 1);
 
         // Eyes
         ctx.fillStyle = '#111111';
         if (state === 'hurt') {
-            // Closed/pain eyes > <
             ctx.fillRect(headX + 5, headY + 6, 3, 2);
             ctx.fillRect(headX + 10, headY + 6, 3, 2);
         } else {
-            // Determined sharp anime eyes
             ctx.fillRect(headX + 5, headY + 5, 4, 3);
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(headX + 6, headY + 6, 2, 2);
             ctx.fillStyle = '#111111';
-            // Brow line
             ctx.fillRect(headX + 4, headY + 4, 6, 1);
         }
 
-        // Hair Rendering based on hairstyle
+        // Draw Hair or unique headgear
         this.drawHair(ctx, char, headX, headY);
     }
 
     drawHair(ctx, char, hx, hy) {
-        if (!char.hairColor && char.hairType === 'namek_turban') {
-            // Piccolo antennae & ears
-            ctx.fillStyle = '#388a2e';
-            ctx.fillRect(hx - 2, hy + 5, 3, 4); // Ear
-            ctx.fillStyle = '#ffd15c'; // Antennas
-            ctx.fillRect(hx + 3, hy - 3, 2, 4);
-            ctx.fillRect(hx + 8, hy - 3, 2, 4);
-            return;
-        }
-        if (!char.hairColor && char.hairType === 'frieza_head') {
-            // Frieza shiny dome & purple top
-            ctx.fillStyle = '#6f199e';
-            ctx.fillRect(hx + 2, hy - 2, 10, 4);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(hx + 4, hy - 1, 3, 2);
-            return;
-        }
-
         const hair = char.hairColor;
         const hi = char.hairHighlight;
-        ctx.fillStyle = hair;
 
-        if (char.hairType === 'wild_spikes') {
-            // Goku iconic wild spiky hair
-            ctx.fillRect(hx - 4, hy - 8, 22, 9);
-            // Left large spike
-            ctx.fillRect(hx - 8, hy - 4, 5, 7);
-            ctx.fillRect(hx - 11, hy - 8, 4, 6);
-            // Top spikes
-            ctx.fillRect(hx - 1, hy - 13, 6, 6);
-            ctx.fillRect(hx + 7, hy - 12, 7, 5);
-            // Right spike
-            ctx.fillRect(hx + 14, hy - 5, 5, 8);
-            // Forehead bangs
-            ctx.fillRect(hx + 1, hy, 4, 3);
-            ctx.fillRect(hx + 8, hy + 1, 3, 3);
+        switch (char.hairType) {
+            case 'wild_spikes':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 4, hy - 8, 22, 9);
+                ctx.fillRect(hx - 8, hy - 4, 5, 7);
+                ctx.fillRect(hx - 11, hy - 8, 4, 6);
+                ctx.fillRect(hx - 1, hy - 13, 6, 6);
+                ctx.fillRect(hx + 7, hy - 12, 7, 5);
+                ctx.fillRect(hx + 14, hy - 5, 5, 8);
+                ctx.fillRect(hx + 1, hy, 4, 3);
+                ctx.fillRect(hx + 8, hy + 1, 3, 3);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx - 1, hy - 11, 4, 2);
+                ctx.fillRect(hx + 7, hy - 10, 4, 2);
+                break;
 
-            // Highlight glint
-            ctx.fillStyle = hi;
-            ctx.fillRect(hx - 1, hy - 11, 4, 2);
-            ctx.fillRect(hx + 7, hy - 10, 4, 2);
-        } else if (char.hairType === 'flame_tall') {
-            // Vegeta tall flame hair
-            ctx.fillRect(hx - 2, hy - 16, 18, 17);
-            ctx.fillRect(hx, hy - 21, 14, 6);
-            ctx.fillRect(hx + 3, hy - 25, 8, 5);
-            // Side spikes
-            ctx.fillRect(hx - 5, hy - 10, 4, 8);
-            ctx.fillRect(hx + 15, hy - 9, 4, 7);
-            // Widow's peak forehead
-            ctx.fillStyle = char.skinColor;
-            ctx.fillRect(hx + 2, hy, 4, 3);
-            ctx.fillRect(hx + 8, hy, 4, 3);
+            case 'flame_tall':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 2, hy - 16, 18, 17);
+                ctx.fillRect(hx, hy - 21, 14, 6);
+                ctx.fillRect(hx + 3, hy - 25, 8, 5);
+                ctx.fillRect(hx - 5, hy - 10, 4, 8);
+                ctx.fillRect(hx + 15, hy - 9, 4, 7);
+                ctx.fillStyle = char.skinColor;
+                ctx.fillRect(hx + 2, hy, 4, 3);
+                ctx.fillRect(hx + 8, hy, 4, 3);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 4, hy - 18, 5, 8);
+                break;
 
-            // Highlight glint
-            ctx.fillStyle = hi;
-            ctx.fillRect(hx + 4, hy - 18, 5, 8);
+            case 'ssj_gohan':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 3, hy - 12, 20, 13);
+                ctx.fillRect(hx + 2, hy - 18, 9, 7); // Center giant spike
+                ctx.fillRect(hx - 6, hy - 8, 4, 7);
+                ctx.fillRect(hx + 15, hy - 8, 4, 7);
+                // Bang on forehead
+                ctx.fillRect(hx + 4, hy - 2, 3, 6);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 3, hy - 16, 4, 4);
+                break;
+
+            case 'trunks_parted':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 3, hy - 7, 20, 9);
+                ctx.fillRect(hx - 4, hy - 2, 4, 10); // Left fringe
+                ctx.fillRect(hx + 14, hy - 2, 4, 10); // Right fringe
+                ctx.fillRect(hx + 5, hy - 2, 3, 4);  // Center parting
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx - 1, hy - 5, 6, 2);
+                ctx.fillRect(hx + 8, hy - 5, 6, 2);
+                break;
+
+            case 'namek_turban':
+                ctx.fillStyle = '#388a2e';
+                ctx.fillRect(hx - 2, hy + 5, 3, 4);
+                ctx.fillStyle = '#ffd15c';
+                ctx.fillRect(hx + 3, hy - 3, 2, 4);
+                ctx.fillRect(hx + 8, hy - 3, 2, 4);
+                break;
+
+            case 'krillin_bald':
+                // 6 Shaolin forehead dots
+                ctx.fillStyle = '#9c6b3b';
+                ctx.fillRect(hx + 4, hy + 1, 1, 1);
+                ctx.fillRect(hx + 6, hy + 1, 1, 1);
+                ctx.fillRect(hx + 8, hy + 1, 1, 1);
+                ctx.fillRect(hx + 4, hy + 3, 1, 1);
+                ctx.fillRect(hx + 6, hy + 3, 1, 1);
+                ctx.fillRect(hx + 8, hy + 3, 1, 1);
+                break;
+
+            case 'frieza_head':
+                ctx.fillStyle = '#6f199e';
+                ctx.fillRect(hx + 2, hy - 2, 10, 4);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(hx + 4, hy - 1, 3, 2);
+                break;
+
+            case 'cell_crown':
+                // Crown horns
+                ctx.fillStyle = '#181a18';
+                ctx.fillRect(hx - 4, hy - 14, 5, 14);
+                ctx.fillRect(hx + 13, hy - 14, 5, 14);
+                ctx.fillStyle = '#6f199e'; // Purple head stone
+                ctx.fillRect(hx + 5, hy - 2, 4, 4);
+                break;
+
+            case 'buu_head':
+                // Antenna tentacle
+                ctx.fillStyle = '#ff77aa';
+                ctx.fillRect(hx + 5, hy - 8, 4, 8);
+                ctx.fillRect(hx + 8, hy - 12, 6, 5);
+                // Steam holes
+                ctx.fillStyle = '#111115';
+                ctx.fillRect(hx + 2, hy - 1, 2, 2);
+                ctx.fillRect(hx + 10, hy - 1, 2, 2);
+                break;
+
+            case 'broly_wild':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 6, hy - 16, 26, 17);
+                ctx.fillRect(hx - 3, hy - 22, 18, 7);
+                ctx.fillRect(hx - 8, hy - 8, 4, 9);
+                ctx.fillRect(hx + 18, hy - 8, 4, 9);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx, hy - 18, 8, 4);
+                break;
+
+            case 'black_rose':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 4, hy - 10, 22, 11);
+                ctx.fillRect(hx - 1, hy - 15, 7, 6);
+                ctx.fillRect(hx + 8, hy - 14, 6, 5);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx, hy - 12, 5, 3);
+                // Potara earring (green)
+                ctx.fillStyle = '#00ff66';
+                ctx.fillRect(hx - 2, hy + 9, 2, 3);
+                break;
+
+            case 'beerus_cat':
+                // Cat ears
+                ctx.fillStyle = char.skinColor;
+                ctx.fillRect(hx - 2, hy - 14, 4, 14);
+                ctx.fillRect(hx + 12, hy - 14, 4, 14);
+                ctx.fillStyle = '#4a2f66';
+                ctx.fillRect(hx, hy - 10, 2, 8);
+                ctx.fillRect(hx + 12, hy - 10, 2, 8);
+                break;
+
+            case 'vegito_spikes':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 3, hy - 13, 20, 14);
+                ctx.fillRect(hx + 1, hy - 19, 10, 7);
+                // Double bangs
+                ctx.fillRect(hx + 2, hy - 1, 3, 5);
+                ctx.fillRect(hx + 8, hy - 1, 3, 5);
+                // Potara earrings (yellow)
+                ctx.fillStyle = '#ffee00';
+                ctx.fillRect(hx - 2, hy + 9, 2, 3);
+                ctx.fillRect(hx + 14, hy + 9, 2, 3);
+                break;
+
+            case 'gogeta_spikes':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 3, hy - 14, 20, 15);
+                ctx.fillRect(hx + 2, hy - 20, 10, 7);
+                // Single center bang
+                ctx.fillRect(hx + 5, hy - 1, 4, 6);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 3, hy - 16, 4, 4);
+                break;
+
+            case 'bardock_spikes':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 4, hy - 8, 22, 9);
+                ctx.fillRect(hx - 8, hy - 4, 5, 7);
+                ctx.fillRect(hx - 1, hy - 13, 6, 6);
+                ctx.fillRect(hx + 7, hy - 12, 7, 5);
+                // Red headband
+                ctx.fillStyle = '#b81424';
+                ctx.fillRect(hx - 1, hy + 1, 16, 3);
+                // Cheek scar
+                ctx.fillStyle = '#b81424';
+                ctx.fillRect(hx + 2, hy + 8, 3, 1);
+                ctx.fillRect(hx + 3, hy + 7, 1, 3);
+                break;
+
+            case 'a18_bob':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 2, hy - 7, 18, 9);
+                ctx.fillRect(hx - 4, hy - 2, 4, 11);
+                ctx.fillRect(hx + 14, hy - 2, 4, 11);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 1, hy - 5, 10, 2);
+                break;
         }
     }
 
     drawKnockedDown(ctx, char, p) {
-        // Horizontal collapsed sprite on ground
         ctx.save();
         ctx.translate(0, 16);
         ctx.rotate(Math.PI * 0.45);
 
         ctx.fillStyle = char.giColor;
         ctx.fillRect(-10, -5, 20, 10);
-        ctx.fillStyle = char.bootsColor;
+        ctx.fillStyle = char.bootsColor || '#333';
         ctx.fillRect(-14, -4, 5, 8);
 
         ctx.fillStyle = char.skinColor;
