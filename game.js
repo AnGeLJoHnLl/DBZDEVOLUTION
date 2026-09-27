@@ -44,6 +44,10 @@ class KiClashGame {
         this.winner = null;
         this.roundMessage = '';
         this.messageTimer = 0;
+        this.transformBanner = null;
+
+        // Global reference for fighter interactions
+        window.gameInstance = this;
 
         // Keys tracking & Configurable Keybindings
         this.keys = {};
@@ -58,6 +62,16 @@ class KiClashGame {
 
         // Start Loop
         requestAnimationFrame(() => this.loop());
+    }
+
+    setTransformBanner(fighter, oldName, newName) {
+        this.transformBanner = {
+            fighterId: fighter.id,
+            oldName: oldName,
+            newName: newName,
+            timer: 90,
+            auraColor: fighter.charConfig.auraColor || '#ffe600'
+        };
     }
 
     initKeybindings() {
@@ -619,6 +633,38 @@ class KiClashGame {
         ctx.textAlign = 'center';
         ctx.fillText(Math.max(0, this.timer).toString().padStart(2, '0'), this.width / 2, 35);
         ctx.restore();
+
+        // Active Transformation Banner Across Screen
+        if (this.transformBanner && this.transformBanner.timer > 0) {
+            this.transformBanner.timer--;
+            const tb = this.transformBanner;
+            const alpha = Math.min(1, tb.timer / 20);
+            ctx.save();
+            ctx.globalAlpha = alpha;
+
+            // Background banner stripe
+            ctx.fillStyle = 'rgba(8, 12, 26, 0.88)';
+            ctx.fillRect(0, 118, this.width, 42);
+            ctx.strokeStyle = tb.auraColor || '#ffe600';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 118, this.width, 42);
+
+            // Shimmer border accents
+            ctx.fillStyle = tb.auraColor || '#ffe600';
+            ctx.fillRect(0, 118, this.width, 2.5);
+            ctx.fillRect(0, 158, this.width, 2.5);
+
+            // Banner Title
+            ctx.textAlign = 'center';
+            ctx.font = '900 15px "Impact", "Arial Black", sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(`⚡ ¡${tb.newName} HA DESPERTADO! ⚡`, this.width / 2, 145);
+
+            ctx.restore();
+            if (this.transformBanner.timer <= 0) {
+                this.transformBanner = null;
+            }
+        }
     }
 
     renderFighterBars(ctx, fighter, x, y, width, height, isRight) {
@@ -666,11 +712,39 @@ class KiClashGame {
         ctx.lineWidth = 1;
         ctx.strokeRect(x, kiY, width, kiHeight);
 
+        // Transformation indicator or charging bar
+        if (fighter.canTransform && !fighter.isDefeated) {
+            const promptY = kiY + 16;
+            if (fighter.transformProgress > 0) {
+                // Charging transform progress bar
+                const barP = Math.min(1, fighter.transformProgress);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(x, promptY - 7, width, 9);
+                ctx.fillStyle = '#ffea00';
+                ctx.fillRect(x + 1, promptY - 6, (width - 2) * barP, 7);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, promptY - 7, width, 9);
+
+                ctx.font = 'bold 7.5px "Courier New", monospace';
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'center';
+                ctx.fillText('⚡ ¡TRANSFORMANDO...! ⚡', x + width / 2, promptY);
+            } else if (fighter.ki >= fighter.maxKi) {
+                // Flashing transformation prompt
+                const pulse = Math.floor(Date.now() / 240) % 2 === 0;
+                ctx.font = 'bold 8px "Courier New", monospace';
+                ctx.fillStyle = pulse ? '#ffea00' : '#ffffff';
+                ctx.textAlign = isRight ? 'right' : 'left';
+                ctx.fillText('⚡ MANTÉN CARGAR: TRANSFORMAR', isRight ? x + width : x, promptY);
+            }
+        }
+
         if (fighter.comboStep > 1) {
             ctx.font = 'italic bold 16px "Courier New", monospace';
             ctx.fillStyle = '#ffeb3b';
             ctx.textAlign = isRight ? 'right' : 'left';
-            ctx.fillText(`${fighter.comboStep} HITS!`, isRight ? x + width : x, kiY + 22);
+            ctx.fillText(`${fighter.comboStep} HITS!`, isRight ? x + width : x, kiY + 28);
         }
 
         ctx.restore();
@@ -691,7 +765,7 @@ class KiClashGame {
 
         ctx.font = 'bold 15px "Courier New", monospace';
         ctx.fillStyle = '#00e1ff';
-        ctx.fillText('SUPER DEVOLUTION ARENA (32 LUCHADORES)', this.width / 2, 110);
+        ctx.fillText('SUPER DEVOLUTION ARENA (64 LUCHADORES)', this.width / 2, 110);
 
         const optY = 185;
         ctx.font = 'bold 19px "Courier New", monospace';
@@ -887,7 +961,7 @@ class KiClashGame {
         ctx.font = '9px "Courier New", monospace';
         ctx.fillStyle = '#8fa0c0';
         ctx.fillText('Haz click en cualquier personaje', 320, panelY + 74);
-        ctx.fillText('o usa W/A/S/D o Flechas (4x12)', 320, panelY + 88);
+        ctx.fillText('o usa W/A/S/D o Flechas (4x16)', 320, panelY + 88);
 
         // Fight Button
         ctx.fillStyle = '#1a3355';

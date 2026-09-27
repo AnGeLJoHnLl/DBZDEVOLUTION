@@ -26,6 +26,24 @@ class FighterRenderer {
             beamColor: '#00e1ff',
             beamCore: '#ffffff'
         },
+        goku_ssj: {
+            name: 'GOKU (SSJ)',
+            title: 'Super Saiyan',
+            hairColor: '#ffe600',
+            hairHighlight: '#fff899',
+            hairType: 'wild_spikes',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#ff5500',
+            giUndershirt: '#0033aa',
+            beltColor: '#0033aa',
+            wristColor: '#0033aa',
+            bootsColor: '#0033aa',
+            auraColor: '#ffe600',
+            specialName: 'SUPER KAMEHA',
+            beamColor: '#00e1ff',
+            beamCore: '#ffee44'
+        },
         vegeta: {
             name: 'VEGETA',
             title: 'Saiyan Prince',
@@ -43,6 +61,25 @@ class FighterRenderer {
             auraColor: '#b400ff',
             specialName: 'GALICK GUN',
             beamColor: '#b400ff',
+            beamCore: '#ffffff'
+        },
+        vegeta_ssj: {
+            name: 'VEGETA (SSJ)',
+            title: 'Super Saiyan',
+            hairColor: '#ffe600',
+            hairHighlight: '#fff899',
+            hairType: 'flame_tall',
+            skinColor: '#ffd1a4',
+            skinShade: '#e5a578',
+            giColor: '#0c2266',
+            armorChest: '#f0f0e8',
+            armorStrap: '#c59420',
+            beltColor: '#c59420',
+            wristColor: '#ffffff',
+            bootsColor: '#ffffff',
+            auraColor: '#ffe600',
+            specialName: 'FINAL FLASH',
+            beamColor: '#ffe600',
             beamCore: '#ffffff'
         },
         gohan: {
@@ -80,6 +117,24 @@ class FighterRenderer {
             specialName: 'BURNING ATTACK',
             beamColor: '#ff9900',
             beamCore: '#fff8a6'
+        },
+        trunks_ssj: {
+            name: 'TRUNKS (SSJ)',
+            title: 'Super Future Hope',
+            hairColor: '#ffe600',
+            hairHighlight: '#fff899',
+            hairType: 'trunks_parted',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#1f2026',
+            jacketColor: '#2b3a6b',
+            beltColor: '#d69e2e',
+            wristColor: '#1f2026',
+            bootsColor: '#c9a13b',
+            auraColor: '#ffe600',
+            specialName: 'BURNING SLASH',
+            beamColor: '#ffaa00',
+            beamCore: '#ffffff'
         },
         piccolo: {
             name: 'PICCOLO',

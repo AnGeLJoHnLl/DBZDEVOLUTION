@@ -20,6 +20,22 @@ Juego de lucha retro 2D inspirado en las mecánicas clásicas de *Dragon Ball De
   * Carga de Ki con aura luminosa y zumbido dinámico.
   * Ráfagas rápidas y **Super Rayos continuos** (*Kamehameha, Galick Gun, Death Beam, Special Beam Cannon*).
   * **Choque de Poderes**: Si dos rayos colisionan de frente, compites pulsando botones para ganar la explosión.
+  * **⚡ Sistema de Transformaciones en Combate (Estilo DB Devolution)**:
+    * Carga tu Ki al 100% y mantén presionado **Cargar Ki** (~0.7s) o presiona **Golpe + Cargar** para despertar tu siguiente forma.
+    * Estallido de ondas expansivas concéntricas, sacudida de pantalla, efecto de sonido ensordecedor y empuje al rival.
+    * **Mejoras**: Recuperación de **+20 HP**, aumento de **velocidad (+12%)**, **+25% daño**, rayos más gruesos y nuevo sprite con cabello, auras y ataques especiales únicos.
+    * **Ramas de Transformación**:
+      * Goku: Base → Super Saiyan (SSJ) → Ultra Instinto (UI)
+      * Vegeta: Base → Super Saiyan (SSJ) → Majin Vegeta → Ultra Ego (UE)
+      * Gohan: SSJ2 → Gohan Definitivo → Gohan Beast
+      * Trunks: Base → Super Saiyan (SSJ)
+      * Piccolo: Maestro Namekiano → Orange Piccolo
+      * Freezer: Forma Final → Golden Freezer
+      * Vegetto / Gogeta: Formas Base/Super → Vegetto Blue (SSB) / Gogeta Blue (SSB)
+      * Broly: Forma Z → Broly DBS (Full Power)
+      * Majin Buu: Buu Gordo → Kid Buu
+      * Goku Black: Base/Rosé → Zamasu Fusionado
+      * Y fusiones legendarias GT (SSJ4 Goku / SSJ4 Vegeta → SSJ4 Gogeta).
 * **Roster Legendario de 64 Luchadores (Cuadrícula Arcade 4x16)**:
   * **Fila 1 (Clásicos & Guerreros Z)**: Goku, Vegeta, Gohan (SSJ2), Gohan del Futuro, Trunks del Futuro, Piccolo, Krilin, Yamcha, Tenshinhan, Chaoz, Maestro Roshi, Goku Niño, Tao Pai Pai, Piccolo Daimaō, Tapion, Pikkon.
   * **Fila 2 (Saiyans, Fuerza Frieza, Androides & Jefes GT)**: Raditz, Nappa, Bardock, Capitán Ginyu, Recoome, Zarbon, Freezer, Cooler, Androide 16, Androide 17, Androide 18, Cell Perfecto, Super 17, Baby Vegeta, Omega Shenron, Broly (DBS).

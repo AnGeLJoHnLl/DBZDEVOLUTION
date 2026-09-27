@@ -204,6 +204,51 @@ class ParticleSystem {
         }
     }
 
+    // Epic Awakening Burst for In-Battle Transformation
+    createTransformShockwave(x, y, auraColor = '#ffe600') {
+        // Multi-ring concentric shockwaves
+        for (let r = 0; r < 3; r++) {
+            this.shockwaves.push({
+                x, y,
+                radius: 6 + r * 6,
+                maxRadius: 58 + r * 16,
+                speed: 4.5 + r * 1.5,
+                color: r === 0 ? '#ffffff' : auraColor,
+                alpha: 1,
+                decay: 0.04
+            });
+        }
+        // Radial 360 degree explosion of energy orbs and sparks
+        for (let i = 0; i < 24; i++) {
+            const angle = (i * Math.PI * 2 / 24) + (Math.random() - 0.5) * 0.2;
+            const speed = 4 + Math.random() * 5.5;
+            this.particles.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: 3 + Math.random() * 2.5,
+                color: i % 2 === 0 ? '#ffffff' : auraColor,
+                alpha: 1,
+                decay: 0.04,
+                type: 'spark'
+            });
+        }
+        // Upward rising fiery energy embers
+        for (let i = 0; i < 16; i++) {
+            this.particles.push({
+                x: x + (Math.random() - 0.5) * 26,
+                y: y + (Math.random() - 0.5) * 16,
+                vx: (Math.random() - 0.5) * 2,
+                vy: -(3 + Math.random() * 4),
+                size: 3 + Math.random() * 2,
+                color: auraColor,
+                alpha: 0.9,
+                decay: 0.035,
+                type: 'spark'
+            });
+        }
+    }
+
     update() {
         // Screen shake decay
         if (this.screenShake > 0) {

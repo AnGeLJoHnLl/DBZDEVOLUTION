@@ -1,5 +1,52 @@
 // Fighter Entity & AI State Machine for Ki Clash
 class Fighter {
+    static TRANSFORMATIONS = {
+        // Goku Lineage: Base -> SSJ -> Ultra Instinct
+        'goku': 'goku_ssj',
+        'goku_ssj': 'goku_ui',
+
+        // Vegeta Lineage: Base -> SSJ -> Majin Vegeta -> Ultra Ego
+        'vegeta': 'vegeta_ssj',
+        'vegeta_ssj': 'majin_vegeta',
+        'majin_vegeta': 'vegeta_ue',
+
+        // Gohan Lineage: SSJ2 -> Ultimate -> Beast
+        'gohan': 'ultimate_gohan',
+        'ultimate_gohan': 'gohan_beast',
+
+        // Trunks Lineage: Future Base -> SSJ Trunks
+        'trunks': 'trunks_ssj',
+
+        // Piccolo Lineage: Namekian -> Orange Piccolo Titan
+        'piccolo': 'orange_piccolo',
+
+        // Frieza Lineage: Final Form -> Golden Frieza
+        'frieza': 'golden_frieza',
+
+        // Fusions Lineage: Base/SSJ -> Godly Blue
+        'vegito': 'ssb_vegito',
+        'gogeta': 'ssb_gogeta',
+
+        // GT Saiyans: SSJ4 Goku/Vegeta -> SSJ4 Gogeta
+        'ssj4_goku': 'ssj4_gogeta',
+        'ssj4_vegeta': 'ssj4_gogeta',
+
+        // Majin Buu -> Kid Buu
+        'buu': 'kid_buu',
+
+        // Broly Z -> Broly DBS Full Power
+        'broly': 'dbs_broly',
+
+        // Goku Black -> Fused Zamasu
+        'black': 'zamasu_fused',
+
+        // Cooler -> Golden Frieza power
+        'cooler': 'golden_frieza',
+
+        // Future Gohan -> Ultimate Beast
+        'future_gohan': 'gohan_beast'
+    };
+
     constructor(config) {
         this.id = config.id || 1;
         this.charKey = config.charKey || 'goku';
@@ -20,6 +67,12 @@ class Fighter {
         this.health = this.maxHealth;
         this.maxKi = 100;
         this.ki = 40;
+
+        // Transformation State
+        this.canTransform = !!Fighter.TRANSFORMATIONS[this.charKey];
+        this.nextFormKey = Fighter.TRANSFORMATIONS[this.charKey] || null;
+        this.transformProgress = 0;
+        this.damageMultiplier = 1.0;
 
         // State Machine
         this.state = 'idle';
@@ -65,6 +118,10 @@ class Fighter {
         this.comboStep = 0;
         this.isDefeated = false;
         this.stunTimer = 0;
+        this.canTransform = !!Fighter.TRANSFORMATIONS[this.charKey];
+        this.nextFormKey = Fighter.TRANSFORMATIONS[this.charKey] || null;
+        this.transformProgress = 0;
+        this.damageMultiplier = 1.0;
     }
 
     update(arenaWidth, arenaHeight, opponent) {
@@ -136,8 +193,26 @@ class Fighter {
                             window.particleSystem.createChargeGroundPulse(this.x, this.y, this.charConfig.auraColor);
                         }
                     }
+
+                    // Check for transformation trigger when Ki is full
+                    if (this.canTransform && this.ki >= this.maxKi) {
+                        this.transformProgress += 1 / 45; // ~0.75 seconds of holding charge at MAX Ki
+                        
+                        // Violent pre-transformation energy surge
+                        if (window.particleSystem) {
+                            window.particleSystem.addScreenShake(1.5 + this.transformProgress * 3.5);
+                            if (Math.random() > 0.35) {
+                                window.particleSystem.createHitSparks(this.x + (Math.random() - 0.5) * 24, this.y + (Math.random() - 0.5) * 24, '#ffffff', 4);
+                            }
+                        }
+
+                        if (this.transformProgress >= 1) {
+                            this.triggerTransformation();
+                        }
+                    }
                 } else {
                     this.state = 'idle';
+                    this.transformProgress = 0;
                     if (window.soundEngine) window.soundEngine.stopCharge();
                 }
                 break;
@@ -192,6 +267,12 @@ class Fighter {
     }
 
     handleMovementAndActions(opponent) {
+        // 0. Quick Transform shortcut: Attack + Charge when Ki is 100%
+        if (this.input.charge && this.input.attack && this.canTransform && this.ki >= this.maxKi) {
+            this.triggerTransformation();
+            return;
+        }
+
         // 1. Guard check
         if (this.input.guard) {
             this.state = 'guard';
@@ -299,6 +380,56 @@ class Fighter {
         }
     }
 
+    // Trigger In-Battle Transformation
+    triggerTransformation() {
+        if (!this.canTransform || !this.nextFormKey) return;
+        const oldName = this.name;
+        const nextKey = this.nextFormKey;
+        const nextConfig = FighterRenderer.CHARACTERS[nextKey];
+        if (!nextConfig) return;
+
+        // Apply new form
+        this.charKey = nextKey;
+        this.charConfig = nextConfig;
+        this.name = nextConfig.name;
+        this.canTransform = !!Fighter.TRANSFORMATIONS[this.charKey];
+        this.nextFormKey = Fighter.TRANSFORMATIONS[this.charKey] || null;
+        this.transformProgress = 0;
+
+        // Buff stats!
+        this.speed = Math.min(6.2, this.speed * 1.12);
+        this.damageMultiplier = (this.damageMultiplier || 1.0) * 1.25;
+        this.health = Math.min(this.maxHealth, this.health + 20); // +20 HP recovery adrenaline burst!
+        this.ki = 50; // Set Ki to 50
+
+        // Stun & push back nearby opponent with awakening shockwave
+        if (window.gameInstance) {
+            window.gameInstance.setTransformBanner(this, oldName, this.name);
+            const opponent = this.id === 1 ? window.gameInstance.p2 : window.gameInstance.p1;
+            if (opponent) {
+                const dist = Math.hypot(opponent.x - this.x, opponent.y - this.y);
+                if (dist < 85) {
+                    opponent.stunTimer = 22;
+                    opponent.knockbackVx = (opponent.x >= this.x ? 1 : -1) * 9;
+                }
+            }
+        }
+
+        // Epic audiovisual effects
+        if (window.soundEngine) {
+            window.soundEngine.stopCharge();
+            window.soundEngine.playTransform();
+        }
+        if (window.particleSystem) {
+            window.particleSystem.addScreenShake(20);
+            window.particleSystem.createTransformShockwave(this.x, this.y, this.charConfig.auraColor || '#ffe600');
+        }
+
+        this.state = 'idle';
+        this.stateTimer = 0;
+        this.attackCooldown = 15;
+    }
+
     performMeleeAttack(opponent) {
         // Combo sequence: punch1 -> punch2 -> kick -> smash
         const comboSequence = ['punch1', 'punch2', 'kick', 'smash'];
@@ -320,7 +451,8 @@ class Fighter {
 
             if (inRangeX && inRangeY) {
                 const isSmash = (currentType === 'smash');
-                const damage = isSmash ? 16 : 6.5;
+                const baseDmg = isSmash ? 16 : 6.5;
+                const damage = baseDmg * (this.damageMultiplier || 1.0);
 
                 opponent.takeDamage(damage, this.facing, isSmash ? 'smash' : 'punch');
 
@@ -445,8 +577,17 @@ class Fighter {
                 }
             }
 
-            // 2. Charge Ki if low and at distance
-            if (this.ki < 30 && dist > 180) {
+            // 2. Transform or Charge Ki
+            if (this.canTransform && dist > 130) {
+                if (this.ki >= this.maxKi) {
+                    this.input.charge = true;
+                    if (Math.random() > 0.4) this.input.attack = true; // Instant burst transform
+                    return;
+                } else if (this.ki < this.maxKi && dist > 160) {
+                    this.input.charge = true;
+                    return;
+                }
+            } else if (this.ki < 30 && dist > 180) {
                 this.input.charge = true;
                 return;
             }

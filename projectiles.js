@@ -18,11 +18,14 @@ class ProjectileManager {
             owner,
             x, y,
             vx, vy,
-            radius: 7,
+            radius: 7 * (owner.damageMultiplier && owner.damageMultiplier > 1 ? 1.2 : 1),
             color,
             life: 80,
-            damage: 8,
-            hitbox: { width: 14, height: 14 }
+            damage: 8 * (owner.damageMultiplier || 1.0),
+            hitbox: {
+                width: 14 * (owner.damageMultiplier && owner.damageMultiplier > 1 ? 1.2 : 1),
+                height: 14 * (owner.damageMultiplier && owner.damageMultiplier > 1 ? 1.2 : 1)
+            }
         });
 
         if (window.soundEngine) {
@@ -42,11 +45,11 @@ class ProjectileManager {
             angle: angle,
             length: 0,
             maxLength: 950,
-            width: 24,
+            width: 24 * (owner.damageMultiplier && owner.damageMultiplier > 1 ? 1.25 : 1),
             speed: 28,
             active: true,
             duration: 90, // frames beam stays active
-            damagePerFrame: 0.9,
+            damagePerFrame: 0.9 * (owner.damageMultiplier || 1.0),
             color: charConfig.beamColor || '#00e1ff',
             coreColor: charConfig.beamCore || '#ffffff',
             specialName: charConfig.specialName

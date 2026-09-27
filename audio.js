@@ -259,6 +259,54 @@ class SoundEngine {
         }
     }
 
+    // Epic Transformation Burst & Power Awakening sound
+    playTransform() {
+        if (this.muted) return;
+        this.resume();
+        if (!this.ctx || !this.masterGain) return;
+        const now = this.ctx.currentTime;
+
+        // 1. Rising Power Surge sweep
+        const oscRise = this.ctx.createOscillator();
+        const gainRise = this.ctx.createGain();
+        oscRise.type = 'sawtooth';
+        oscRise.frequency.setValueAtTime(140, now);
+        oscRise.frequency.exponentialRampToValueAtTime(880, now + 0.45);
+        gainRise.gain.setValueAtTime(0.3, now);
+        gainRise.gain.linearRampToValueAtTime(0.5, now + 0.4);
+        gainRise.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+        oscRise.connect(gainRise);
+        gainRise.connect(this.masterGain);
+        oscRise.start(now);
+        oscRise.stop(now + 0.7);
+
+        // 2. Booming Shockwave Bass Explosion
+        const oscBoom = this.ctx.createOscillator();
+        const gainBoom = this.ctx.createGain();
+        oscBoom.type = 'sine';
+        oscBoom.frequency.setValueAtTime(180, now + 0.35);
+        oscBoom.frequency.exponentialRampToValueAtTime(32, now + 1.2);
+        gainBoom.gain.setValueAtTime(0.65, now + 0.35);
+        gainBoom.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        oscBoom.connect(gainBoom);
+        gainBoom.connect(this.masterGain);
+        oscBoom.start(now + 0.35);
+        oscBoom.stop(now + 1.2);
+
+        // 3. High-energy resonant chime
+        const chime = this.ctx.createOscillator();
+        const chimeGain = this.ctx.createGain();
+        chime.type = 'triangle';
+        chime.frequency.setValueAtTime(1174.66, now + 0.4);
+        chime.frequency.exponentialRampToValueAtTime(587.33, now + 0.9);
+        chimeGain.gain.setValueAtTime(0.3, now + 0.4);
+        chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+        chime.connect(chimeGain);
+        chimeGain.connect(this.masterGain);
+        chime.start(now + 0.4);
+        chime.stop(now + 0.9);
+    }
+
     // Guard / Block sound
     playGuard() {
         if (this.muted) return;
