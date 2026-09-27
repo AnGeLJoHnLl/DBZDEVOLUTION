@@ -114,8 +114,13 @@ class Fighter {
                 this.stateTimer--;
                 this.x += this.vx;
                 this.y += this.vy;
-                if (window.particleSystem && Math.random() > 0.3) {
-                    window.particleSystem.addAfterimage(this);
+                if (window.particleSystem) {
+                    if (Math.random() > 0.3) {
+                        window.particleSystem.addAfterimage(this);
+                    }
+                    if (Math.random() > 0.35) {
+                        window.particleSystem.createSpeedStreak(this.x, this.y, this.facing, this.charConfig.auraColor);
+                    }
                 }
                 if (this.stateTimer <= 0) {
                     this.state = 'idle';
@@ -259,7 +264,10 @@ class Fighter {
             this.vy = (dy / len) * dashSpeed;
 
             if (window.soundEngine) window.soundEngine.playVanish();
-            if (window.particleSystem) window.particleSystem.addAfterimage(this);
+            if (window.particleSystem) {
+                window.particleSystem.addAfterimage(this);
+                window.particleSystem.createDashDust(this.x, this.y, this.facing);
+            }
             return;
         }
 
@@ -317,7 +325,12 @@ class Fighter {
                 opponent.takeDamage(damage, this.facing, isSmash ? 'smash' : 'punch');
 
                 if (window.particleSystem) {
-                    window.particleSystem.createHitSparks(opponent.x, opponent.y - 6, '#ffffff', isSmash ? 18 : 8);
+                    if (isSmash) {
+                        window.particleSystem.createHitBurst(opponent.x, opponent.y - 6, '#ffffff');
+                        window.particleSystem.createHitSparks(opponent.x, opponent.y - 6, this.charConfig.beamColor || '#ffea00', 22);
+                    } else {
+                        window.particleSystem.createHitSparks(opponent.x, opponent.y - 6, '#ffffff', 10);
+                    }
                 }
                 if (window.soundEngine) {
                     window.soundEngine.playHit(isSmash);
@@ -360,6 +373,7 @@ class Fighter {
             this.knockbackVx = pushDir * (type === 'smash' ? 12 : 7);
             if (window.particleSystem) {
                 window.particleSystem.addScreenShake(type === 'smash' ? 10 : 8);
+                window.particleSystem.createLandingDust(this.x, this.y);
             }
         } else {
             this.state = 'hurt';

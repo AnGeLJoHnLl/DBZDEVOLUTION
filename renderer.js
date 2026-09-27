@@ -886,7 +886,7 @@ class FighterRenderer {
         ctx.fill();
 
         if (state === 'charge') {
-            this.drawChargingAura(ctx, char.auraColor, animFrame);
+            this.drawChargingAura(ctx, char, animFrame);
         }
 
         this.drawFighterPose(ctx, char, state, animFrame, pSize);
@@ -894,26 +894,83 @@ class FighterRenderer {
         ctx.restore();
     }
 
-    drawChargingAura(ctx, auraColor, frame) {
+    drawChargingAura(ctx, char, frame) {
         ctx.save();
-        const pulse = Math.sin(Date.now() * 0.02) * 4;
-        const grad = ctx.createRadialGradient(0, 0, 8, 0, 0, 36 + pulse);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+        const auraColor = char.auraColor || '#00e1ff';
+        const pulse = Math.sin(Date.now() * 0.02) * 5;
+        const grad = ctx.createRadialGradient(0, 0, 8, 0, 0, 38 + pulse);
+        grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
         grad.addColorStop(0.3, auraColor);
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.moveTo(0, -38 - pulse);
-        ctx.lineTo(18 + pulse, -12);
-        ctx.lineTo(26 + pulse, 14);
-        ctx.lineTo(12, 28);
-        ctx.lineTo(-12, 28);
-        ctx.lineTo(-26 - pulse, 14);
-        ctx.lineTo(-18 - pulse, -12);
+        ctx.moveTo(0, -42 - pulse);
+        ctx.lineTo(20 + pulse, -14);
+        ctx.lineTo(28 + pulse, 14);
+        ctx.lineTo(14, 28);
+        ctx.lineTo(-14, 28);
+        ctx.lineTo(-28 - pulse, 14);
+        ctx.lineTo(-20 - pulse, -14);
         ctx.closePath();
         ctx.fill();
 
+        // Animated rising pixel flame spikes
+        for (let i = 0; i < 9; i++) {
+            const flamePhase = (frame * 18 + i * 42) % 90;
+            const flameY = 24 - flamePhase * 0.7;
+            const flameX = (i - 4) * 6 + Math.sin(flamePhase * 0.15) * 5;
+            const flameH = 5 + Math.sin(flamePhase * 0.2) * 4;
+            ctx.fillStyle = i % 2 === 0 ? auraColor : '#ffffff';
+            ctx.fillRect(flameX, flameY, 2.5, flameH);
+        }
+
+        // Bio-Electricity Lightning Bolts for high-tier / SSJ forms
+        const isSuperElectric = char.name.includes('SSJ2') ||
+                                char.name.includes('SSJ3') ||
+                                char.name.includes('SSJ4') ||
+                                char.name.includes('U.I.') ||
+                                char.name.includes('U.E.') ||
+                                char.name.includes('BEAST') ||
+                                char.name.includes('MAJIN VEGETA') ||
+                                char.name.includes('VEGITO') ||
+                                char.name.includes('GOGETA') ||
+                                char.name.includes('BEERUS');
+        if (isSuperElectric) {
+            const sparkColor = (char.name.includes('U.E.') || char.name.includes('BEERUS')) ? '#ff00ee' :
+                               char.name.includes('BEAST') ? '#ff1133' :
+                               char.name.includes('U.I.') ? '#e0f7ff' : '#ffee00';
+            this.drawElectricSparks(ctx, sparkColor, frame);
+        }
+
+        ctx.restore();
+    }
+
+    drawElectricSparks(ctx, color, frame) {
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        const seed = Math.floor(frame * 6);
+        for (let j = 0; j < 3; j++) {
+            const angle = ((seed * 1.7 + j * 2.1) % (Math.PI * 2));
+            const dist = 18 + Math.sin(seed + j) * 8;
+            const sx = Math.cos(angle) * dist;
+            const sy = Math.sin(angle) * dist * 0.8 - 4;
+            const mx = sx + (Math.sin(seed * 3 + j) > 0 ? 5 : -5);
+            const my = sy + (Math.cos(seed * 2 + j) > 0 ? 6 : -6);
+            const ex = mx + (Math.cos(seed * 4 + j) > 0 ? 6 : -6);
+            const ey = my + (Math.sin(seed * 5 + j) > 0 ? 7 : -7);
+
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(mx, my);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+
+            // Spark pixel core
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(mx - 1, my - 1, 2, 2);
+        }
         ctx.restore();
     }
 
@@ -923,91 +980,187 @@ class FighterRenderer {
         let legOffset = 0;
         let punchExtend = 0;
         let headTilt = 0;
+        let torsoLean = 0;
         let armPose = 'normal';
+
+        // Organic breathing sine oscillation
+        const breath = Math.sin(frame * 1.8);
 
         switch (state) {
             case 'idle':
-                bobY = (f === 1 || f === 2) ? 1 : 0;
+                bobY = Math.round(breath * 1.2);
                 armPose = 'guard_ready';
                 break;
             case 'walk':
                 bobY = (f % 2 === 1) ? -1 : 0;
-                legOffset = (f === 0 || f === 2) ? (f === 0 ? 3 : -3) : 0;
+                legOffset = (f === 0 || f === 2) ? (f === 0 ? 3.5 : -3.5) : 0;
                 armPose = 'walk_swing';
+                torsoLean = 1;
                 break;
             case 'dash':
-                bobY = 4;
+                bobY = 3;
                 headTilt = 3;
-                legOffset = -5;
+                torsoLean = 4;
+                legOffset = -6;
                 armPose = 'dash_trail';
                 break;
             case 'punch1':
-                punchExtend = 7;
+                punchExtend = 8;
+                torsoLean = 2;
                 armPose = 'punch_jab';
                 break;
             case 'punch2':
-                punchExtend = 9;
+                punchExtend = 11;
                 headTilt = 1;
+                torsoLean = 3;
                 armPose = 'punch_cross';
                 break;
             case 'kick':
-                legOffset = 9;
+                legOffset = 11;
+                torsoLean = -2;
+                headTilt = -1;
                 armPose = 'kick_balance';
                 break;
             case 'smash':
-                punchExtend = 12;
+                punchExtend = 14;
                 headTilt = 2;
+                torsoLean = 4;
                 armPose = 'heavy_smash';
                 break;
             case 'charge':
+                // Violent Ki vibration tremor
                 bobY = 2 + (Math.random() > 0.5 ? 1 : -1);
+                torsoLean = (Math.random() - 0.5) * 1.5;
                 armPose = 'charge_flex';
                 break;
             case 'ki_blast':
-                punchExtend = 6;
+                punchExtend = 7;
+                torsoLean = 1;
                 armPose = 'palm_blast';
                 break;
             case 'beam':
                 bobY = 2;
-                punchExtend = 8;
+                punchExtend = 9;
+                torsoLean = -2; // Leaning back bracing against immense beam recoil!
                 armPose = 'two_hand_beam';
                 break;
             case 'guard':
-                bobY = 2;
+                bobY = 1;
+                torsoLean = -1;
                 armPose = 'cross_guard';
                 break;
             case 'hurt':
-                bobY = -2;
-                headTilt = -4;
+                bobY = -3;
+                headTilt = -5;
+                torsoLean = -4; // Body bent backward from hit impact!
                 armPose = 'hurt_flail';
                 break;
             case 'knockdown':
-                this.drawKnockedDown(ctx, char, p);
+                this.drawKnockedDown(ctx, char, p, frame);
                 return;
         }
 
         const originY = -12 + bobY;
 
+        // Tail animation with fluid wagging motion
         if (char.tail) {
             ctx.fillStyle = '#7a4214'; // Brown monkey tail
+            const tailWag = Math.sin(frame * 3.5) * 3;
+            const wagX = Math.round(tailWag);
             ctx.fillRect(-10, originY + 12, 4, 3);
-            ctx.fillRect(-14, originY + 10, 4, 3);
-            ctx.fillRect(-16, originY + 6, 3, 5);
-            ctx.fillRect(-15, originY + 4, 3, 3);
+            ctx.fillRect(-14, originY + 10 + Math.round(wagX * 0.4), 4, 3);
+            ctx.fillRect(-16 + wagX, originY + 6, 3, 5);
+            ctx.fillRect(-15 + wagX, originY + 3 + Math.round(wagX * 0.3), 3, 3);
+            ctx.fillRect(-13 + wagX, originY + 1, 3, 3); // Fluffy animated tail tip
+        }
+
+        // Draw dynamic attack smear arcs
+        if (state === 'punch1' || state === 'punch2') {
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.fillRect(15 + punchExtend * 0.8, originY + 4, 7, 2);
+            ctx.fillStyle = char.auraColor || '#00e1ff';
+            ctx.fillRect(17 + punchExtend * 0.8, originY + 5, 9, 3);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(20 + punchExtend * 0.8, originY + 6, 6, 1);
+            ctx.restore();
+        } else if (state === 'kick') {
+            ctx.save();
+            ctx.strokeStyle = char.auraColor || '#ffe600';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(10, originY + 14, 15, -Math.PI * 0.5, Math.PI * 0.2);
+            ctx.stroke();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.arc(10, originY + 14, 13, -Math.PI * 0.4, Math.PI * 0.1);
+            ctx.stroke();
+            ctx.restore();
+        } else if (state === 'smash') {
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.fillRect(18 + punchExtend * 0.8, originY + 1, 13, 2);
+            ctx.fillRect(20 + punchExtend * 0.8, originY + 9, 11, 2);
+            ctx.fillStyle = char.auraColor || '#ffaa00';
+            ctx.fillRect(22 + punchExtend * 0.8, originY + 3, 14, 6);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(24 + punchExtend * 0.8, originY + 5, 10, 2);
+            // Shockwave crescent
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(26 + punchExtend * 0.8, originY + 6, 15, -Math.PI * 0.45, Math.PI * 0.45);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        ctx.save();
+        if (torsoLean !== 0) {
+            ctx.translate(0, originY + 12);
+            ctx.rotate(torsoLean * 0.04);
+            ctx.translate(0, -(originY + 12));
         }
 
         this.drawLegs(ctx, char, p, originY, legOffset, state);
-        this.drawTorso(ctx, char, p, originY, state);
-        this.drawArms(ctx, char, p, originY, armPose, punchExtend);
-        this.drawHead(ctx, char, p, originY + headTilt, state);
+        this.drawTorso(ctx, char, p, originY, state, frame);
+        this.drawArms(ctx, char, p, originY, armPose, punchExtend, char);
+        this.drawHead(ctx, char, p, originY + headTilt, state, frame);
 
+        ctx.restore();
+
+        // Enhanced Guard with glowing shimmering hexagonal glints
         if (state === 'guard') {
             ctx.save();
+            const guardPulse = Math.sin(frame * 6) * 2;
             ctx.strokeStyle = char.auraColor || '#00f0ff';
             ctx.lineWidth = 2.5;
             ctx.beginPath();
-            ctx.arc(8, originY + 8, 18, -Math.PI * 0.45, Math.PI * 0.45);
+            ctx.arc(8, originY + 8, 18 + guardPulse, -Math.PI * 0.46, Math.PI * 0.46);
             ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.arc(8, originY + 8, 16 + guardPulse, -Math.PI * 0.38, Math.PI * 0.38);
+            ctx.stroke();
+
+            // Dynamic barrier glint
+            const glintA = (frame * 3) % (Math.PI * 0.7) - Math.PI * 0.35;
+            const gx = 8 + Math.cos(glintA) * (18 + guardPulse);
+            const gy = originY + 8 + Math.sin(glintA) * (18 + guardPulse);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(gx - 1.5, gy - 1.5, 3, 3);
+            ctx.restore();
+        }
+
+        // Damage flash / sweat drops on hurt
+        if (state === 'hurt') {
+            ctx.save();
+            ctx.fillStyle = '#80d4ff';
+            ctx.fillRect(-12, originY - 14, 2, 2);
+            ctx.fillRect(-15, originY - 10, 2, 2);
+            ctx.fillRect(-11, originY - 6, 2, 2);
             ctx.restore();
         }
     }
@@ -1040,7 +1193,7 @@ class FighterRenderer {
         ctx.fillRect(rightLegX - 1, legY + 8, 7, 4);
     }
 
-    drawTorso(ctx, char, p, originY, state) {
+    drawTorso(ctx, char, p, originY, state, frame = 0) {
         const chestX = -7;
         const chestY = originY + 3;
         const width = 14;
@@ -1104,6 +1257,15 @@ class FighterRenderer {
             }
         }
 
+        // Dangling sash / belt ends waving in the wind
+        if (char.beltColor && !char.armorChest) {
+            const sashWave = Math.sin(frame * 3.2) * 2;
+            const sx = chestX + 2 + Math.round(sashWave * 0.4);
+            ctx.fillStyle = char.beltColor;
+            ctx.fillRect(sx, chestY + height - 1, 2, 4);
+            ctx.fillRect(sx + Math.round(sashWave * 0.6), chestY + height + 3, 2, 3);
+        }
+
         if (char.name === 'CELL') {
             ctx.fillStyle = '#111115';
             ctx.fillRect(chestX - 6, chestY - 4, 4, 14);
@@ -1111,7 +1273,7 @@ class FighterRenderer {
         }
     }
 
-    drawArms(ctx, char, p, originY, pose, punchExtend) {
+    drawArms(ctx, char, p, originY, pose, punchExtend, charData) {
         const skin = char.skinColor;
         const wrist = char.wristColor || char.skinColor;
         const gi = char.furColor || char.jacketColor || char.giUndershirt || char.giColor;
@@ -1144,6 +1306,20 @@ class FighterRenderer {
                 break;
 
             case 'two_hand_beam':
+                ctx.fillStyle = gi;
+                ctx.fillRect(0, armY - 3, 8, 6);
+                ctx.fillStyle = skin;
+                ctx.fillRect(7, armY - 3, 5 + punchExtend, 6);
+                ctx.fillStyle = wrist;
+                ctx.fillRect(11 + punchExtend, armY - 4, 6, 8);
+                // Glowing concentrated energy core gathering in hands
+                const bPulse = Math.sin(Date.now() * 0.03) * 2;
+                ctx.fillStyle = char.beamColor || '#00e1ff';
+                ctx.fillRect(17 + punchExtend, armY - 3 - bPulse, 6 + bPulse, 7 + bPulse * 2);
+                ctx.fillStyle = char.beamCore || '#ffffff';
+                ctx.fillRect(18 + punchExtend, armY - 1, 4, 3);
+                break;
+
             case 'palm_blast':
                 ctx.fillStyle = gi;
                 ctx.fillRect(1, armY - 2, 7, 5);
@@ -1151,6 +1327,11 @@ class FighterRenderer {
                 ctx.fillRect(7, armY - 2, 5 + punchExtend, 5);
                 ctx.fillStyle = wrist;
                 ctx.fillRect(11 + punchExtend, armY - 3, 5, 7);
+                // Energy spark at palm
+                ctx.fillStyle = char.beamColor || '#ffe600';
+                ctx.fillRect(16 + punchExtend, armY - 1, 4, 4);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(17 + punchExtend, armY, 2, 2);
                 break;
 
             case 'cross_guard':
@@ -1171,7 +1352,7 @@ class FighterRenderer {
         }
     }
 
-    drawHead(ctx, char, p, originY, state) {
+    drawHead(ctx, char, p, originY, state, frame = 0) {
         const headX = -7;
         const headY = originY - 14;
         const skin = char.skinColor;
@@ -1184,11 +1365,24 @@ class FighterRenderer {
         ctx.fillStyle = shade;
         ctx.fillRect(headX + 3, headY + 13, 8, 1);
 
+        // Natural eye blinking cycle every ~4 seconds
+        const blinkCycle = Math.floor(frame * 6) % 36;
+        const isBlinking = (blinkCycle === 0 || blinkCycle === 1) && (state === 'idle' || state === 'walk');
+
         // Eyes
         ctx.fillStyle = '#111111';
         if (state === 'hurt') {
-            ctx.fillRect(headX + 5, headY + 6, 3, 2);
-            ctx.fillRect(headX + 10, headY + 6, 3, 2);
+            // Grimacing pain squint (> <)
+            ctx.fillRect(headX + 4, headY + 5, 2, 1);
+            ctx.fillRect(headX + 6, headY + 6, 2, 2);
+            ctx.fillRect(headX + 4, headY + 8, 2, 1);
+
+            ctx.fillRect(headX + 11, headY + 5, 2, 1);
+            ctx.fillRect(headX + 9, headY + 6, 2, 2);
+            ctx.fillRect(headX + 11, headY + 8, 2, 1);
+        } else if (isBlinking) {
+            // Natural blink (horizontal closed eye slit)
+            ctx.fillRect(headX + 5, headY + 7, 5, 1);
         } else if (char.eyeliner) {
             // SSJ4 Eyeliner & fierce gaze
             ctx.fillStyle = char.eyeliner;
@@ -1221,6 +1415,11 @@ class FighterRenderer {
         if (char.scouter) {
             ctx.fillStyle = char.scouter;
             ctx.fillRect(headX + 3, headY + 4, 6, 4);
+            // Pulsing target LED
+            if (Math.floor(frame * 5) % 3 === 0) {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(headX + 6, headY + 5, 2, 2);
+            }
         }
 
         // Majin symbol
@@ -1231,12 +1430,21 @@ class FighterRenderer {
             ctx.fillRect(headX + 8, headY + 1, 2, 3);
         }
 
-        this.drawHair(ctx, char, headX, headY);
+        this.drawHair(ctx, char, headX, headY, frame, state);
     }
 
-    drawHair(ctx, char, hx, hy) {
+    drawHair(ctx, char, hx, hy, frame = 0, state = 'idle') {
         const hair = char.hairColor;
         const hi = char.hairHighlight;
+
+        // Hair lifts upward during Ki charge
+        const hairLift = (state === 'charge') ? -2 : 0;
+        hy += hairLift;
+
+        // Wind / movement flutter
+        const isAction = (state === 'dash' || state === 'charge' || state === 'smash');
+        const flutter = isAction ? Math.sin(frame * 6) * 2.2 : Math.sin(frame * 2.2) * 1.2;
+        const fShift = Math.round(flutter);
 
         switch (char.hairType) {
             case 'wild_spikes':
@@ -1449,11 +1657,13 @@ class FighterRenderer {
                 break;
 
             case 'ssj3_long':
-                // SSJ3 hair down past knees without eyebrows
+                // SSJ3 hair down past knees with dynamic fluid waving motion
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 4, hy - 8, 22, 10);
-                ctx.fillRect(hx - 6, hy, 5, 28);
-                ctx.fillRect(hx + 15, hy, 5, 28);
+                ctx.fillRect(hx - 6 + Math.round(fShift * 0.4), hy, 5, 14);
+                ctx.fillRect(hx - 7 + fShift, hy + 14, 6, 16);
+                ctx.fillRect(hx + 15 + Math.round(fShift * 0.4), hy, 5, 14);
+                ctx.fillRect(hx + 16 + fShift, hy + 14, 6, 16);
                 ctx.fillRect(hx - 2, hy - 14, 8, 7);
                 ctx.fillRect(hx + 7, hy - 13, 8, 6);
                 ctx.fillStyle = hi;
@@ -1465,9 +1675,12 @@ class FighterRenderer {
                 ctx.fillRect(hx - 3, hy - 7, 20, 9);
                 ctx.fillRect(hx - 4, hy - 2, 4, 10);
                 ctx.fillRect(hx + 14, hy - 2, 4, 10);
-                // Orange scarf around neck
+                // Orange scarf waving behind
+                const scarfWave = Math.round(Math.sin(frame * 4.5) * 2.5);
                 ctx.fillStyle = '#ff7700';
                 ctx.fillRect(hx + 2, hy + 12, 10, 4);
+                ctx.fillRect(hx - 5 + scarfWave, hy + 12, 5, 3);
+                ctx.fillRect(hx - 8 + Math.round(scarfWave * 1.3), hy + 14, 4, 2);
                 break;
 
             case 'a16_mohawk':
@@ -1524,8 +1737,8 @@ class FighterRenderer {
             case 'a18_bob':
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 2, hy - 7, 18, 9);
-                ctx.fillRect(hx - 4, hy - 2, 4, 11);
-                ctx.fillRect(hx + 14, hy - 2, 4, 11);
+                ctx.fillRect(hx - 4 + Math.round(fShift * 0.4), hy - 2, 4, 11);
+                ctx.fillRect(hx + 14 + Math.round(fShift * 0.4), hy - 2, 4, 11);
                 ctx.fillStyle = hi;
                 ctx.fillRect(hx + 1, hy - 5, 10, 2);
                 break;
@@ -1533,8 +1746,9 @@ class FighterRenderer {
             case 'tao_braid':
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 2, hy - 6, 18, 7);
-                ctx.fillRect(hx - 6, hy + 1, 4, 18);
-                ctx.fillRect(hx - 4, hy + 19, 3, 4);
+                ctx.fillRect(hx - 6, hy + 1, 4, 9);
+                ctx.fillRect(hx - 7 + fShift, hy + 10, 4, 9);
+                ctx.fillRect(hx - 5 + Math.round(fShift * 1.4), hy + 19, 3, 4);
                 break;
 
             case 'demon_king_head':
@@ -1559,7 +1773,8 @@ class FighterRenderer {
             case 'zarbon_braid':
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 2, hy - 7, 18, 8);
-                ctx.fillRect(hx - 6, hy + 1, 4, 20);
+                ctx.fillRect(hx - 6, hy + 1, 4, 10);
+                ctx.fillRect(hx - 7 + fShift, hy + 11, 4, 10);
                 ctx.fillStyle = '#ffd700';
                 ctx.fillRect(hx + 1, hy - 1, 12, 2);
                 ctx.fillRect(hx + 6, hy - 3, 2, 3);
@@ -1576,9 +1791,10 @@ class FighterRenderer {
                 break;
 
             case 'kid_buu_head':
+                const kidBuuWag = Math.round(Math.sin(frame * 4) * 2);
                 ctx.fillStyle = '#ff77aa';
                 ctx.fillRect(hx + 5, hy - 6, 4, 6);
-                ctx.fillRect(hx + 7, hy - 10, 5, 5);
+                ctx.fillRect(hx + 7 + kidBuuWag, hy - 10, 5, 5);
                 ctx.fillStyle = '#111115';
                 ctx.fillRect(hx + 2, hy - 1, 2, 2);
                 ctx.fillRect(hx + 10, hy - 1, 2, 2);
@@ -1596,8 +1812,8 @@ class FighterRenderer {
             case 'bojack_orange':
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 5, hy - 12, 24, 13);
-                ctx.fillRect(hx - 7, hy - 2, 5, 18);
-                ctx.fillRect(hx + 16, hy - 2, 5, 18);
+                ctx.fillRect(hx - 7 + fShift, hy - 2, 5, 18);
+                ctx.fillRect(hx + 16 + fShift, hy - 2, 5, 18);
                 ctx.fillStyle = '#18181f';
                 ctx.fillRect(hx - 1, hy + 1, 16, 3);
                 break;
@@ -1615,8 +1831,10 @@ class FighterRenderer {
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 5, hy - 10, 24, 11);
                 ctx.fillRect(hx - 2, hy - 16, 12, 7);
-                ctx.fillRect(hx - 8, hy - 2, 5, 20);
-                ctx.fillRect(hx + 17, hy - 2, 5, 20);
+                ctx.fillRect(hx - 8 + Math.round(fShift * 0.4), hy - 2, 5, 12);
+                ctx.fillRect(hx - 9 + fShift, hy + 10, 5, 10);
+                ctx.fillRect(hx + 17 + Math.round(fShift * 0.4), hy - 2, 5, 12);
+                ctx.fillRect(hx + 18 + fShift, hy + 10, 5, 10);
                 ctx.fillRect(hx + 4, hy - 1, 3, 5);
                 ctx.fillStyle = hi;
                 ctx.fillRect(hx, hy - 14, 6, 3);
@@ -1626,8 +1844,10 @@ class FighterRenderer {
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 4, hy - 14, 22, 15);
                 ctx.fillRect(hx - 1, hy - 20, 14, 7);
-                ctx.fillRect(hx - 7, hy - 2, 4, 18);
-                ctx.fillRect(hx + 17, hy - 2, 4, 18);
+                ctx.fillRect(hx - 7 + Math.round(fShift * 0.4), hy - 2, 4, 10);
+                ctx.fillRect(hx - 8 + fShift, hy + 8, 4, 10);
+                ctx.fillRect(hx + 17 + Math.round(fShift * 0.4), hy - 2, 4, 10);
+                ctx.fillRect(hx + 18 + fShift, hy + 8, 4, 10);
                 ctx.fillStyle = hi;
                 ctx.fillRect(hx + 3, hy - 17, 6, 4);
                 break;
@@ -1636,8 +1856,10 @@ class FighterRenderer {
                 ctx.fillStyle = hair;
                 ctx.fillRect(hx - 5, hy - 15, 24, 16);
                 ctx.fillRect(hx - 2, hy - 22, 14, 8);
-                ctx.fillRect(hx - 8, hy - 3, 5, 22);
-                ctx.fillRect(hx + 17, hy - 3, 5, 22);
+                ctx.fillRect(hx - 8 + Math.round(fShift * 0.4), hy - 3, 5, 12);
+                ctx.fillRect(hx - 9 + fShift, hy + 9, 5, 12);
+                ctx.fillRect(hx + 17 + Math.round(fShift * 0.4), hy - 3, 5, 12);
+                ctx.fillRect(hx + 18 + fShift, hy + 9, 5, 12);
                 ctx.fillRect(hx + 4, hy - 1, 4, 6);
                 ctx.fillStyle = hi;
                 ctx.fillRect(hx, hy - 19, 8, 5);
@@ -1645,10 +1867,10 @@ class FighterRenderer {
         }
     }
 
-    drawKnockedDown(ctx, char, p) {
+    drawKnockedDown(ctx, char, p, frame = 0) {
         ctx.save();
         ctx.translate(0, 16);
-        ctx.rotate(Math.PI * 0.45);
+        ctx.rotate(Math.PI * 0.45 + Math.sin(frame * 4) * 0.08);
 
         ctx.fillStyle = char.giColor;
         ctx.fillRect(-10, -5, 20, 10);
@@ -1662,6 +1884,12 @@ class FighterRenderer {
             ctx.fillStyle = char.hairColor;
             ctx.fillRect(15, -7, 9, 12);
         }
+
+        // Bruise and dirt marks on fallen fighter
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+        ctx.fillRect(-4, -1, 6, 3);
+        ctx.fillRect(11, -3, 4, 3);
+
         ctx.restore();
     }
 }

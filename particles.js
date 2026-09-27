@@ -125,6 +125,85 @@ class ParticleSystem {
         });
     }
 
+    // Ground dust kicked up on dash
+    createDashDust(x, y, facing) {
+        for (let i = 0; i < 5; i++) {
+            this.particles.push({
+                x: x - facing * (10 + Math.random() * 8),
+                y: y + 20 + (Math.random() - 0.5) * 4,
+                vx: -facing * (1.2 + Math.random() * 2),
+                vy: -(0.5 + Math.random() * 1.5),
+                size: 2.5 + Math.random() * 3,
+                color: Math.random() > 0.4 ? '#c8bca0' : '#e8dec8',
+                alpha: 0.8,
+                decay: 0.05,
+                type: 'dust'
+            });
+        }
+    }
+
+    // Ground dust kicked up on landing / knockback impact
+    createLandingDust(x, y) {
+        for (let dir of [-1, 1]) {
+            for (let i = 0; i < 4; i++) {
+                this.particles.push({
+                    x: x + dir * 6,
+                    y: y + 22,
+                    vx: dir * (1.5 + Math.random() * 2.5),
+                    vy: -(0.3 + Math.random() * 1.2),
+                    size: 2.5 + Math.random() * 3,
+                    color: '#d0c8b0',
+                    alpha: 0.75,
+                    decay: 0.06,
+                    type: 'dust'
+                });
+            }
+        }
+    }
+
+    // High speed streak lines during dash
+    createSpeedStreak(x, y, facing, color = '#00f0ff') {
+        this.particles.push({
+            x: x - facing * (8 + Math.random() * 6),
+            y: y + (Math.random() - 0.5) * 22,
+            vx: -facing * (4 + Math.random() * 5),
+            vy: 0,
+            size: 1.5,
+            length: 12 + Math.random() * 16,
+            color: color,
+            alpha: 0.85,
+            decay: 0.08,
+            type: 'streak'
+        });
+    }
+
+    // Starburst hit impact on combos
+    createHitBurst(x, y, color = '#ffffff') {
+        this.shockwaves.push({
+            x, y,
+            radius: 5,
+            maxRadius: 32,
+            speed: 3.5,
+            color: color,
+            alpha: 0.95,
+            decay: 0.08
+        });
+        for (let i = 0; i < 8; i++) {
+            const angle = (i * Math.PI / 4) + (Math.random() - 0.5) * 0.3;
+            const speed = 3.5 + Math.random() * 4;
+            this.particles.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: 2 + Math.random() * 2,
+                color: Math.random() > 0.3 ? color : '#ffea00',
+                alpha: 1,
+                decay: 0.06,
+                type: 'spark'
+            });
+        }
+    }
+
     update() {
         // Screen shake decay
         if (this.screenShake > 0) {
@@ -140,6 +219,10 @@ class ParticleSystem {
             p.alpha -= p.decay;
             if (p.type === 'aura') {
                 p.size = Math.max(1, p.size * 0.94);
+            } else if (p.type === 'streak') {
+                p.length = Math.max(2, p.length * 0.88);
+            } else if (p.type === 'dust') {
+                p.size += 0.12;
             }
             if (p.alpha <= 0) {
                 this.particles.splice(i, 1);
@@ -173,8 +256,6 @@ class ParticleSystem {
         for (const a of this.afterimages) {
             ctx.save();
             ctx.globalAlpha = Math.max(0, a.alpha);
-            // Render monochrome ghost
-            ctx.filter = 'brightness(200%) drop-shadow(0 0 6px cyan)';
             a.fighter.drawSprite(ctx, a.x, a.y, a.facing, a.state, a.frame);
             ctx.restore();
         }
@@ -196,8 +277,10 @@ class ParticleSystem {
             ctx.save();
             ctx.globalAlpha = Math.max(0, p.alpha);
             ctx.fillStyle = p.color;
-            if (p.type === 'spark') {
-                ctx.fillRect(Math.round(p.x - p.size / 2), Math.round(p.y - p.size / 2), p.size, p.size);
+            if (p.type === 'spark' || p.type === 'dust') {
+                ctx.fillRect(Math.round(p.x - p.size / 2), Math.round(p.y - p.size / 2), Math.round(p.size), Math.round(p.size));
+            } else if (p.type === 'streak') {
+                ctx.fillRect(Math.round(p.x), Math.round(p.y), Math.round(p.length), Math.round(p.size));
             } else {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
