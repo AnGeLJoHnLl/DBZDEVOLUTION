@@ -86,6 +86,7 @@ class Fighter {
         this.attackCooldown = 0;
         this.stunTimer = 0;
         this.knockbackVx = 0;
+        this.guardSoundTimer = 0;
 
         // Control type
         this.isAI = !!config.isAI;
@@ -118,6 +119,7 @@ class Fighter {
         this.comboStep = 0;
         this.isDefeated = false;
         this.stunTimer = 0;
+        this.guardSoundTimer = 0;
         this.canTransform = !!Fighter.TRANSFORMATIONS[this.charKey];
         this.nextFormKey = Fighter.TRANSFORMATIONS[this.charKey] || null;
         this.transformProgress = 0;
@@ -141,9 +143,26 @@ class Fighter {
         // Cooldown decrements
         if (this.dashCooldown > 0) this.dashCooldown--;
         if (this.attackCooldown > 0) this.attackCooldown--;
+        if (this.guardSoundTimer > 0) this.guardSoundTimer--;
 
         // Stun & Knockback update
         if (this.stunTimer > 0) {
+            // Active Guard Recovery: pressing/holding guard allows breaking out of hitstun into a solid block!
+            if (this.input.guard) {
+                this.state = 'guard';
+                this.stunTimer = 0;
+                this.knockbackVx = 0;
+                if (window.particleSystem) {
+                    window.particleSystem.createGuardFlash(this.x, this.y, '#00e1ff');
+                    window.particleSystem.createHitSparks(this.x, this.y, '#00e1ff', 6);
+                }
+                if (window.soundEngine && this.guardSoundTimer <= 0) {
+                    window.soundEngine.playGuard();
+                    this.guardSoundTimer = 8;
+                }
+                return;
+            }
+
             this.stunTimer--;
             this.x += this.knockbackVx;
             this.knockbackVx *= 0.88;
@@ -454,7 +473,15 @@ class Fighter {
                 const baseDmg = isSmash ? 16 : 6.5;
                 const damage = baseDmg * (this.damageMultiplier || 1.0);
 
-                opponent.takeDamage(damage, this.facing, isSmash ? 'smash' : 'punch');
+                const blocked = opponent.takeDamage(damage, this.facing, isSmash ? 'smash' : 'punch');
+
+                if (blocked) {
+                    // Attack was completely blocked! Stop combo progression and recoil slightly
+                    this.comboStep = 0;
+                    this.stateTimer = 8;
+                    this.attackCooldown = 12;
+                    return;
+                }
 
                 if (window.particleSystem) {
                     if (isSmash) {
@@ -479,20 +506,24 @@ class Fighter {
     }
 
     takeDamage(amount, pushDir = 1, type = 'punch') {
-        if (this.isDefeated) return;
+        if (this.isDefeated) return false;
 
-        // If guarding, reduce damage heavily and absorb knockback
-        if (this.state === 'guard') {
-            const reduced = amount * 0.25;
-            this.health = Math.max(0, this.health - reduced);
+        // If guarding or holding guard input, absorb ALL damage (0 damage) and absorb knockback
+        const isGuarding = (this.state === 'guard' || this.input.guard);
+
+        if (isGuarding) {
+            this.state = 'guard';
+            this.stunTimer = 0;
+            this.knockbackVx = pushDir * 0.8;
             if (window.particleSystem) {
                 window.particleSystem.createGuardFlash(this.x, this.y, '#00e1ff');
+                window.particleSystem.createHitSparks(this.x + pushDir * -8, this.y, '#00e1ff', 6);
             }
-            if (window.soundEngine) {
+            if (window.soundEngine && this.guardSoundTimer <= 0) {
                 window.soundEngine.playGuard();
+                this.guardSoundTimer = 8;
             }
-            this.checkDefeat();
-            return;
+            return true; // Completely blocked! 0 damage
         }
 
         this.health = Math.max(0, this.health - amount);
@@ -515,6 +546,7 @@ class Fighter {
         }
 
         this.checkDefeat();
+        return false; // Direct hit
     }
 
     checkDefeat() {
@@ -594,7 +626,8 @@ class Fighter {
 
             // 3. Melee range attack
             if (dist < 45) {
-                if (opponent.state === 'attack' && Math.random() > 0.6) {
+                const isEnemyAttacking = opponent.state.startsWith('punch') || opponent.state === 'kick' || opponent.state === 'smash';
+                if (isEnemyAttacking && Math.random() > 0.5) {
                     this.input.guard = true;
                 } else {
                     this.input.attack = true;

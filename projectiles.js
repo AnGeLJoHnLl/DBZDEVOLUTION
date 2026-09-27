@@ -105,12 +105,18 @@ class ProjectileManager {
 
                 const dist = Math.hypot(b.x - f.x, b.y - f.y);
                 if (dist < b.radius + f.hitboxRadius) {
-                    f.takeDamage(b.damage, b.vx > 0 ? 1 : -1, 'blast');
-                    if (window.particleSystem) {
-                        window.particleSystem.createExplosion(b.x, b.y, b.color, 14);
-                    }
-                    if (window.soundEngine) {
-                        window.soundEngine.playExplosion(false);
+                    const wasBlocked = f.takeDamage(b.damage, b.vx > 0 ? 1 : -1, 'blast');
+                    if (wasBlocked) {
+                        if (window.particleSystem) {
+                            window.particleSystem.createHitSparks(b.x, b.y, '#00e1ff', 8);
+                        }
+                    } else {
+                        if (window.particleSystem) {
+                            window.particleSystem.createExplosion(b.x, b.y, b.color, 14);
+                        }
+                        if (window.soundEngine) {
+                            window.soundEngine.playExplosion(false);
+                        }
                     }
                     this.blasts.splice(i, 1);
                     hit = true;
@@ -181,9 +187,15 @@ class ProjectileManager {
             for (const f of fighters) {
                 if (f === beam.owner || f.isDefeated) continue;
                 if (this.isPointNearSegment(f.x, f.y, beam.startX, beam.startY, beamEndX, beamEndY, beam.width + f.hitboxRadius)) {
-                    f.takeDamage(beam.damagePerFrame, beam.dirX > 0 ? 1 : -1, 'beam');
-                    if (window.particleSystem && Math.random() > 0.4) {
-                        window.particleSystem.createHitSparks(f.x, f.y, beam.color, 3);
+                    const wasBlocked = f.takeDamage(beam.damagePerFrame, beam.dirX > 0 ? 1 : -1, 'beam');
+                    if (wasBlocked) {
+                        if (window.particleSystem && Math.random() > 0.3) {
+                            window.particleSystem.createHitSparks(f.x, f.y, '#00e1ff', 3);
+                        }
+                    } else {
+                        if (window.particleSystem && Math.random() > 0.4) {
+                            window.particleSystem.createHitSparks(f.x, f.y, beam.color, 3);
+                        }
                     }
                 }
             }

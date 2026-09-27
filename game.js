@@ -350,7 +350,7 @@ class KiClashGame {
         this.p1.input.beam = !!(this.keys[b1.beam]);
         this.p1.input.charge = !!(this.keys[b1.charge]);
         this.p1.input.dash = !!(this.keys[b1.dash]);
-        this.p1.input.guard = !!(this.keys[b1.guard]);
+        this.p1.input.guard = !!(this.keys[b1.guard] || this.keys['KeyU'] || this.keys['KeyI']);
 
         // Gamepad 1 for Player 1
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -381,7 +381,7 @@ class KiClashGame {
             this.p2.input.beam = !!(this.keys[b2.beam]);
             this.p2.input.charge = !!(this.keys[b2.charge]);
             this.p2.input.dash = !!(this.keys[b2.dash]);
-            this.p2.input.guard = !!(this.keys[b2.guard]);
+            this.p2.input.guard = !!(this.keys[b2.guard] || this.keys['Numpad4'] || this.keys['Numpad5']);
 
             if (gamepads && gamepads[1]) {
                 const pad2 = gamepads[1];
