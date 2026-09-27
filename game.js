@@ -16,16 +16,16 @@ class KiClashGame {
         this.currentStage = 'tournament';
         this.isPaused = false;
 
-        // Roster of 48 Legendary Fighters (4 Rows x 12 Columns)
+        // Roster of 64 Legendary Fighters (4 Rows x 16 Columns)
         this.charList = [
-            // Row 1: Earth Defenders & Classic Era
-            'goku', 'vegeta', 'gohan', 'trunks', 'piccolo', 'krillin', 'yamcha', 'tien', 'roshi', 'kid_goku', 'tao', 'king_piccolo',
-            // Row 2: Saiyans, Frieza Force & Androids
-            'raditz', 'nappa', 'bardock', 'ginyu', 'recoome', 'zarbon', 'frieza', 'cooler', 'a16', 'a17', 'a18', 'cell',
-            // Row 3: Majin, Fusions & Movie Villains
-            'dabura', 'buu', 'kid_buu', 'majin_vegeta', 'ultimate_gohan', 'gotenks', 'vegito', 'gogeta', 'broly', 'janemba', 'turles', 'bojack',
-            // Row 4: Super, Gods & GT
-            'beerus', 'golden_frieza', 'black', 'hit', 'jiren', 'goku_ui', 'vegeta_ue', 'gohan_beast', 'orange_piccolo', 'ssj4_goku', 'ssj4_vegeta', 'ssj4_gogeta'
+            // Row 1: Earth Defenders & Classic Era (16)
+            'goku', 'vegeta', 'gohan', 'future_gohan', 'trunks', 'piccolo', 'krillin', 'yamcha', 'tien', 'chaoz', 'roshi', 'kid_goku', 'tao', 'king_piccolo', 'tapion', 'pikkon',
+            // Row 2: Saiyans, Frieza Force, Androids & GT Bosses (16)
+            'raditz', 'nappa', 'bardock', 'ginyu', 'recoome', 'zarbon', 'frieza', 'cooler', 'a16', 'a17', 'a18', 'cell', 'super_17', 'baby_vegeta', 'omega_shenron', 'dbs_broly',
+            // Row 3: Majin, Fusions, Movie Villains & Multiverse (16)
+            'dabura', 'buu', 'kid_buu', 'majin_vegeta', 'ultimate_gohan', 'gotenks', 'vegito', 'ssb_vegito', 'gogeta', 'ssb_gogeta', 'kefla', 'broly', 'janemba', 'turles', 'bojack', 'zamasu_fused',
+            // Row 4: Super, Gods, Manga & GT (16)
+            'beerus', 'whis', 'golden_frieza', 'black', 'hit', 'jiren', 'toppo', 'moro', 'granolah', 'goku_ui', 'vegeta_ue', 'gohan_beast', 'orange_piccolo', 'ssj4_goku', 'ssj4_vegeta', 'ssj4_gogeta'
         ];
 
         this.selectIndexP1 = 0; // Goku
@@ -142,8 +142,8 @@ class KiClashGame {
                     if (window.soundEngine) window.soundEngine.playHit(true);
                 }
             } else if (this.state === 'SELECT' && !this.isPaused) {
-                // 4x12 Grid Navigation for P1 (W, A, S, D)
-                const COLS = 12;
+                // 4x16 Grid Navigation for P1 (W, A, S, D)
+                const COLS = 16;
                 const ROWS = 4;
                 const TOTAL = COLS * ROWS;
 
@@ -169,7 +169,7 @@ class KiClashGame {
                     if (window.soundEngine) window.soundEngine.playHit(false);
                 }
 
-                // 4x12 Grid Navigation for P2 (Arrow Keys)
+                // 4x16 Grid Navigation for P2 (Arrow Keys)
                 if (e.code === this.keyBindings.p2.left || e.code === 'ArrowLeft') {
                     const row = Math.floor(this.selectIndexP2 / COLS);
                     const col = this.selectIndexP2 % COLS;
@@ -227,9 +227,9 @@ class KiClashGame {
                 this.state = 'SELECT';
                 if (window.soundEngine) window.soundEngine.playHit(true);
             } else if (this.state === 'SELECT') {
-                const COLS = 12;
+                const COLS = 16;
                 const ROWS = 4;
-                const boxW = 44;
+                const boxW = 36;
                 const boxH = 42;
                 const gapX = 3;
                 const gapY = 3;
@@ -730,12 +730,12 @@ class KiClashGame {
         ctx.font = '900 15px "Courier New", monospace';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#ffe600';
-        ctx.fillText('★ GRAN TORNEO MULTIVERSAL (48 LUCHADORES) ★', this.width / 2, 17);
+        ctx.fillText('★ GRAN TORNEO MULTIVERSAL (64 LUCHADORES) ★', this.width / 2, 17);
 
-        // 4x12 Character Selection Matrix
-        const COLS = 12;
+        // 4x16 Character Selection Matrix
+        const COLS = 16;
         const ROWS = 4;
-        const boxW = 44;
+        const boxW = 36;
         const boxH = 42;
         const gapX = 3;
         const gapY = 3;
@@ -769,7 +769,7 @@ class KiClashGame {
             ctx.restore();
 
             // Name
-            ctx.font = 'bold 6.8px "Courier New", monospace';
+            ctx.font = 'bold 6px "Courier New", monospace';
             ctx.fillStyle = (isP1 || isP2) ? '#ffe600' : '#d0d8e8';
             ctx.textAlign = 'center';
             let shortName = char.name
@@ -777,25 +777,33 @@ class KiClashGame {
                 .replace('(U.I.)', 'UI')
                 .replace('(U.E.)', 'UE')
                 .replace('(SSJ3)', 'SS3')
+                .replace('(SSB)', 'SSB')
+                .replace('(H.O.D.)', 'GOD')
+                .replace('(DBS)', 'DBS')
                 .replace('MASTER ', 'M.')
                 .replace('MERCENARY ', '')
                 .replace('ANDROID ', 'A-')
                 .replace('ULTIMATE ', 'ULT.')
                 .replace('GOLDEN ', 'G.')
                 .replace('ORANGE ', 'O.')
-                .replace('KING ', 'K.');
-            ctx.fillText(shortName.substring(0, 9), bx + boxW / 2, by + 39);
+                .replace('KING ', 'K.')
+                .replace('FUTURE ', 'F.')
+                .replace('FUSED ', 'F.')
+                .replace('BABY ', 'B.')
+                .replace('SUPER ', 'S.')
+                .replace('SHENRON', 'SHEN');
+            ctx.fillText(shortName.substring(0, 8), bx + boxW / 2, by + 39);
 
             // Badges
             if (isP1) {
                 ctx.fillStyle = '#00e1ff';
-                ctx.font = 'bold 8px monospace';
-                ctx.fillText('P1', bx + 7, by + 8);
+                ctx.font = 'bold 7.5px monospace';
+                ctx.fillText('P1', bx + 6, by + 8);
             }
             if (isP2) {
                 ctx.fillStyle = '#ff1744';
-                ctx.font = 'bold 8px monospace';
-                ctx.fillText(this.mode === '1P_CPU' ? 'CPU' : 'P2', bx + boxW - 8, by + 8);
+                ctx.font = 'bold 7.5px monospace';
+                ctx.fillText(this.mode === '1P_CPU' ? 'CPU' : 'P2', bx + boxW - 6, by + 8);
             }
         });
 

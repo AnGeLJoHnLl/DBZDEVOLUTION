@@ -867,6 +867,300 @@ class FighterRenderer {
             specialName: '100X BIG BANG',
             beamColor: '#ff0044',
             beamCore: '#ffea00'
+        },
+        // 16 NEW LEGENDARY FIGHTERS (TOTAL 64)
+        ssb_vegito: {
+            name: 'VEGITO (SSB)',
+            title: 'Godly Potara',
+            hairColor: '#00e5ff',
+            hairHighlight: '#a6f5ff',
+            hairType: 'vegito_spikes',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#08338f',
+            giUndershirt: '#ff5500',
+            beltColor: '#08338f',
+            wristColor: '#ffffff',
+            bootsColor: '#ffffff',
+            auraColor: '#00e5ff',
+            specialName: 'FINAL KAMEHA',
+            beamColor: '#00e5ff',
+            beamCore: '#ffee55'
+        },
+        ssb_gogeta: {
+            name: 'GOGETA (SSB)',
+            title: 'Godly Fusion',
+            hairColor: '#00d0ff',
+            hairHighlight: '#9cf0ff',
+            hairType: 'gogeta_spikes',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#ffffff',
+            vestColor: '#18181f',
+            paddingColor: '#ffea00',
+            beltColor: '#00aaff',
+            wristColor: '#18181f',
+            bootsColor: '#18181f',
+            auraColor: '#00d0ff',
+            specialName: 'STARDUST BUST',
+            beamColor: '#00f0ff',
+            beamCore: '#ff66ff'
+        },
+        future_gohan: {
+            name: 'FUTURE GOHAN',
+            title: 'Lone Defender',
+            hairColor: '#ffe600',
+            hairHighlight: '#fff899',
+            hairType: 'future_gohan_spikes',
+            scar: true,
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#ff5500',
+            giUndershirt: '#0033aa',
+            beltColor: '#0033aa',
+            wristColor: '#0033aa',
+            bootsColor: '#0033aa',
+            auraColor: '#ffe600',
+            specialName: 'HYPER MASENKO',
+            beamColor: '#ffe600',
+            beamCore: '#ffffff'
+        },
+        tapion: {
+            name: 'TAPION',
+            title: 'Hero of Konats',
+            hairColor: '#ff4400',
+            hairHighlight: '#ff8833',
+            hairType: 'tapion_hair',
+            skinColor: '#ffcc99',
+            skinShade: '#e0a070',
+            giColor: '#b08a3e',
+            giUndershirt: '#151518',
+            beltColor: '#258f9c',
+            wristColor: '#d4af37',
+            bootsColor: '#4a3319',
+            sword: true,
+            auraColor: '#ffaa00',
+            specialName: 'BRAVE SWORD',
+            beamColor: '#ffaa00',
+            beamCore: '#00ffff'
+        },
+        zamasu_fused: {
+            name: 'FUSED ZAMASU',
+            title: 'Supreme God',
+            hairColor: '#ffffff',
+            hairHighlight: '#d8e4f0',
+            hairType: 'zamasu_hair',
+            halo: true,
+            haloColor: '#ffffff',
+            skinColor: '#8ce07b',
+            skinShade: '#5db84f',
+            giColor: '#1f2026',
+            giUndershirt: '#6f199e',
+            beltColor: '#b81424',
+            wristColor: '#ffffff',
+            bootsColor: '#ffffff',
+            auraColor: '#ffffff',
+            specialName: 'HOLY WRATH',
+            beamColor: '#9900ee',
+            beamCore: '#ffffff'
+        },
+        kefla: {
+            name: 'KEFLA (SSJ2)',
+            title: 'Universe 6 Potara',
+            hairColor: '#88ff00',
+            hairHighlight: '#c8ff80',
+            hairType: 'kefla_ponytail',
+            skinColor: '#ffd1a4',
+            skinShade: '#e5a578',
+            giColor: '#9e1135',
+            beltColor: '#111115',
+            wristColor: '#d4af37',
+            bootsColor: '#111115',
+            auraColor: '#55ff00',
+            specialName: 'GIGANTIC BURST',
+            beamColor: '#00ff66',
+            beamCore: '#ff0055'
+        },
+        toppo: {
+            name: 'TOPPO (H.O.D.)',
+            title: 'God of Destruct.',
+            hairColor: null,
+            hairType: 'toppo_head',
+            skinColor: '#381647',
+            skinShade: '#220b2e',
+            giColor: '#151518',
+            giUndershirt: null,
+            beltColor: '#151518',
+            wristColor: '#ffffff',
+            bootsColor: '#ffffff',
+            auraColor: '#9900ff',
+            specialName: 'HAKAI SPHERE',
+            beamColor: '#7a00cc',
+            beamCore: '#000000'
+        },
+        dbs_broly: {
+            name: 'BROLY (DBS)',
+            title: 'Raging Titan',
+            hairColor: '#80ff00',
+            hairHighlight: '#bdff66',
+            hairType: 'dbs_broly_hair',
+            scar: true,
+            peltColor: '#2e8f4d',
+            skinColor: '#c9956b',
+            skinShade: '#9e6d47',
+            giColor: '#181b30',
+            beltColor: '#2e8f4d',
+            wristColor: '#181b30',
+            bootsColor: '#ffffff',
+            auraColor: '#00ff33',
+            specialName: 'GIGANTIC ROAR',
+            beamColor: '#00ff33',
+            beamCore: '#ffffff'
+        },
+        moro: {
+            name: 'MORO',
+            title: 'Planet Eater',
+            hairColor: '#e8e8e8',
+            hairHighlight: '#ffffff',
+            hairType: 'moro_goat',
+            skinColor: '#2b3652',
+            skinShade: '#1b2336',
+            giColor: '#8a2b38',
+            vestColor: '#f0f0e8',
+            beltColor: '#d4af37',
+            wristColor: '#d4af37',
+            bootsColor: '#18181f',
+            auraColor: '#ff0033',
+            specialName: 'MAGIC DRAIN',
+            beamColor: '#ff1100',
+            beamCore: '#660099'
+        },
+        granolah: {
+            name: 'GRANOLAH',
+            title: 'Last Cerulian',
+            hairColor: '#3cb896',
+            hairHighlight: '#70d6bb',
+            hairType: 'granolah_hair',
+            eyepatch: true,
+            skinColor: '#ffd1a4',
+            skinShade: '#e0a070',
+            giColor: '#5c6347',
+            beltColor: '#7a5230',
+            wristColor: '#7a5230',
+            bootsColor: '#7a5230',
+            auraColor: '#ff2200',
+            specialName: 'SNIPER SHOT',
+            beamColor: '#ff0022',
+            beamCore: '#ffffff'
+        },
+        whis: {
+            name: 'WHIS',
+            title: 'Angel Attendant',
+            hairColor: '#ffffff',
+            hairHighlight: '#d8e4f0',
+            hairType: 'whis_pomp',
+            halo: true,
+            haloColor: '#00ffff',
+            staff: true,
+            skinColor: '#7fa5c4',
+            skinShade: '#5d7f9c',
+            giColor: '#82193b',
+            beltColor: '#18968f',
+            wristColor: '#18968f',
+            bootsColor: '#ffffff',
+            auraColor: '#00ffff',
+            specialName: 'DESTRUCTION',
+            beamColor: '#00f0ff',
+            beamCore: '#ffffff'
+        },
+        omega_shenron: {
+            name: 'OMEGA SHENRON',
+            title: 'Negative Dragon (GT)',
+            hairColor: null,
+            hairType: 'omega_horns',
+            backSpikes: true,
+            skinColor: '#e8e8f5',
+            skinShade: '#b5b5c7',
+            giColor: '#151518',
+            beltColor: '#151518',
+            wristColor: '#151518',
+            bootsColor: '#151518',
+            auraColor: '#ff1100',
+            specialName: 'KARMA BALL',
+            beamColor: '#ff0033',
+            beamCore: '#000000'
+        },
+        baby_vegeta: {
+            name: 'BABY VEGETA',
+            title: 'Tuffle King (GT)',
+            hairColor: '#e0e8f0',
+            hairHighlight: '#ffffff',
+            hairType: 'flame_tall',
+            faceLines: true,
+            skinColor: '#ffd1a4',
+            skinShade: '#e5a578',
+            giColor: '#121215',
+            armorChest: '#d4af37',
+            armorStrap: '#ff1133',
+            beltColor: '#d4af37',
+            wristColor: '#d4af37',
+            bootsColor: '#d4af37',
+            auraColor: '#aa00ee',
+            specialName: 'REVENGE CANNON',
+            beamColor: '#7a00cc',
+            beamCore: '#ff0066'
+        },
+        super_17: {
+            name: 'SUPER 17',
+            title: 'Hell Android (GT)',
+            hairColor: '#111115',
+            hairHighlight: '#2c2d38',
+            hairType: 'super17_hair',
+            skinColor: '#ffe0bd',
+            skinShade: '#e8be99',
+            giColor: '#2b3652',
+            giUndershirt: '#151518',
+            beltColor: '#7a5230',
+            wristColor: '#ffe0bd',
+            bootsColor: '#228ba8',
+            auraColor: '#00ff88',
+            specialName: 'FLASH BOMBER',
+            beamColor: '#00ff88',
+            beamCore: '#ffffff'
+        },
+        pikkon: {
+            name: 'PIKKON',
+            title: 'Otherworld Hero',
+            hairColor: null,
+            hairType: 'pikkon_hat',
+            skinColor: '#4ca857',
+            skinShade: '#317339',
+            giColor: '#f0f0e8',
+            beltColor: '#258f9c',
+            wristColor: '#8a4b1f',
+            bootsColor: '#8a4b1f',
+            auraColor: '#ff8800',
+            specialName: 'THUNDER FLASH',
+            beamColor: '#ff6600',
+            beamCore: '#ffff00'
+        },
+        chaoz: {
+            name: 'CHIAOTZU',
+            title: 'Crane Psychic',
+            hairColor: null,
+            hairType: 'chaoz_hat',
+            cheeks: '#ff3344',
+            skinColor: '#f8f8ff',
+            skinShade: '#d8d8ea',
+            giColor: '#2b7835',
+            giUndershirt: '#ffd700',
+            beltColor: '#b81424',
+            wristColor: '#2b7835',
+            bootsColor: '#111115',
+            auraColor: '#00ffff',
+            specialName: 'PSYCHIC WAVE',
+            beamColor: '#ff9900',
+            beamCore: '#ffffff'
         }
     };
 
@@ -929,16 +1223,23 @@ class FighterRenderer {
         const isSuperElectric = char.name.includes('SSJ2') ||
                                 char.name.includes('SSJ3') ||
                                 char.name.includes('SSJ4') ||
+                                char.name.includes('SSB') ||
                                 char.name.includes('U.I.') ||
                                 char.name.includes('U.E.') ||
                                 char.name.includes('BEAST') ||
                                 char.name.includes('MAJIN VEGETA') ||
                                 char.name.includes('VEGITO') ||
                                 char.name.includes('GOGETA') ||
-                                char.name.includes('BEERUS');
+                                char.name.includes('BEERUS') ||
+                                char.name.includes('TOPPO') ||
+                                char.name.includes('OMEGA') ||
+                                char.name.includes('KEFLA') ||
+                                char.name.includes('BABY');
         if (isSuperElectric) {
-            const sparkColor = (char.name.includes('U.E.') || char.name.includes('BEERUS')) ? '#ff00ee' :
-                               char.name.includes('BEAST') ? '#ff1133' :
+            const sparkColor = (char.name.includes('U.E.') || char.name.includes('BEERUS') || char.name.includes('TOPPO')) ? '#b400ff' :
+                               (char.name.includes('BEAST') || char.name.includes('OMEGA')) ? '#ff1133' :
+                               char.name.includes('SSB') ? '#00ffff' :
+                               char.name.includes('KEFLA') ? '#55ff00' :
                                char.name.includes('U.I.') ? '#e0f7ff' : '#ffee00';
             this.drawElectricSparks(ctx, sparkColor, frame);
         }
@@ -1271,6 +1572,49 @@ class FighterRenderer {
             ctx.fillRect(chestX - 6, chestY - 4, 4, 14);
             ctx.fillRect(chestX + width + 2, chestY - 4, 4, 14);
         }
+
+        // Angel / Divine Halo
+        if (char.halo) {
+            ctx.save();
+            ctx.strokeStyle = char.haloColor || '#00e1ff';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.ellipse(0, originY - 11, 12, 4, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Waist fur pelt (Ba's ear pelt for DBS Broly)
+        if (char.peltColor) {
+            ctx.fillStyle = char.peltColor;
+            ctx.fillRect(chestX - 2, chestY + height - 2, width + 4, 6);
+            ctx.fillRect(chestX - 3, chestY + height + 3, 5, 4);
+            ctx.fillRect(chestX + width - 2, chestY + height + 3, 5, 4);
+        }
+
+        // Hero's sword and scabbard on back (Tapion)
+        if (char.sword) {
+            ctx.fillStyle = '#6b4724';
+            ctx.fillRect(chestX, chestY + 2, width, 2);
+            ctx.fillStyle = '#d4af37';
+            ctx.fillRect(chestX - 5, chestY - 6, 3, 7);
+            ctx.fillRect(chestX - 7, chestY - 3, 7, 2);
+        }
+
+        // Dragon back horns & 7 chest dragon balls (Omega Shenron)
+        if (char.backSpikes) {
+            ctx.fillStyle = '#111115';
+            ctx.fillRect(chestX - 4, chestY - 6, 3, 9);
+            ctx.fillRect(chestX + width + 1, chestY - 6, 3, 9);
+            // 7 Dragon Balls on chest
+            ctx.fillStyle = '#3388ff';
+            ctx.fillRect(chestX + 3, chestY + 2, 2, 2);
+            ctx.fillRect(chestX + 6, chestY + 2, 2, 2);
+            ctx.fillRect(chestX + 9, chestY + 2, 2, 2);
+            ctx.fillRect(chestX + 4, chestY + 5, 2, 2);
+            ctx.fillRect(chestX + 8, chestY + 5, 2, 2);
+            ctx.fillRect(chestX + 6, chestY + 8, 2, 2);
+        }
     }
 
     drawArms(ctx, char, p, originY, pose, punchExtend, charData) {
@@ -1278,6 +1622,18 @@ class FighterRenderer {
         const wrist = char.wristColor || char.skinColor;
         const gi = char.furColor || char.jacketColor || char.giUndershirt || char.giColor;
         const armY = originY + 5;
+
+        // Whis Angelic Staff
+        if (char.staff) {
+            ctx.fillStyle = '#1c1b18';
+            ctx.fillRect(10, armY - 18, 2, 34);
+            ctx.fillStyle = '#00ffff';
+            ctx.beginPath();
+            ctx.arc(11, armY - 21, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(10, armY - 22, 2, 2);
+        }
 
         switch (pose) {
             case 'punch_jab':
@@ -1420,6 +1776,37 @@ class FighterRenderer {
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(headX + 6, headY + 5, 2, 2);
             }
+        }
+
+        // Facial scars (Future Gohan, DBS Broly)
+        if (char.scar) {
+            ctx.fillStyle = '#8a3328';
+            ctx.fillRect(headX + 4, headY + 3, 1, 3);
+            ctx.fillRect(headX + 5, headY + 5, 1, 3);
+        }
+
+        // Cybernetic eye sniper targeting reticle (Granolah)
+        if (char.eyepatch) {
+            ctx.fillStyle = '#ff1100';
+            ctx.fillRect(headX + 5, headY + 4, 4, 4);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(headX + 6, headY + 5, 2, 2);
+        }
+
+        // Round red blush cheeks (Chiaotzu)
+        if (char.cheeks) {
+            ctx.fillStyle = char.cheeks;
+            ctx.fillRect(headX + 2, headY + 7, 2, 2);
+            ctx.fillRect(headX + 9, headY + 7, 2, 2);
+        }
+
+        // Cybernetic red facial marks (Baby Vegeta)
+        if (char.faceLines) {
+            ctx.fillStyle = '#ff1133';
+            ctx.fillRect(headX + 4, headY + 2, 1, 4);
+            ctx.fillRect(headX + 8, headY + 2, 1, 4);
+            ctx.fillRect(headX + 3, headY + 6, 2, 1);
+            ctx.fillRect(headX + 8, headY + 6, 2, 1);
         }
 
         // Majin symbol
@@ -1863,6 +2250,160 @@ class FighterRenderer {
                 ctx.fillRect(hx + 4, hy - 1, 4, 6);
                 ctx.fillStyle = hi;
                 ctx.fillRect(hx, hy - 19, 8, 5);
+                break;
+
+            case 'future_gohan_spikes':
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 3, hy - 11, 20, 12);
+                ctx.fillRect(hx - 6, hy - 7, 4, 8);
+                ctx.fillRect(hx + 16, hy - 7, 4, 8);
+                ctx.fillRect(hx + 2, hy - 16, 7, 6);
+                ctx.fillRect(hx + 10, hy - 14, 6, 5);
+                // Front long bang hanging over forehead
+                ctx.fillRect(hx + 4, hy - 1, 3, 6);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 3, hy - 13, 5, 3);
+                break;
+
+            case 'tapion_hair':
+                // Red-orange mohawk
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx + 3, hy - 14, 8, 15);
+                ctx.fillRect(hx + 5, hy - 18, 5, 5);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 6, hy - 15, 3, 8);
+                // Golden Konatsian metal headband with ruby
+                ctx.fillStyle = '#d4af37';
+                ctx.fillRect(hx - 1, hy, 16, 3);
+                ctx.fillStyle = '#ff2200';
+                ctx.fillRect(hx + 6, hy, 3, 3);
+                break;
+
+            case 'zamasu_hair':
+                // Pure white swept god hair
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 4, hy - 9, 22, 10);
+                ctx.fillRect(hx - 1, hy - 15, 12, 7);
+                ctx.fillRect(hx + 7, hy - 19, 8, 5);
+                ctx.fillRect(hx - 6, hy - 3, 4, 7);
+                ctx.fillRect(hx + 15, hy - 3, 4, 7);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 1, hy - 12, 6, 3);
+                // Green Supreme Kai Potara Earring on left ear
+                ctx.fillStyle = '#00ff66';
+                ctx.fillRect(hx - 3, hy + 6, 2, 3);
+                break;
+
+            case 'kefla_ponytail':
+                // Lime green spiky hair with high ponytail
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 3, hy - 8, 20, 9);
+                ctx.fillRect(hx - 1, hy - 14, 10, 7);
+                // High spiky ponytail swaying
+                ctx.fillRect(hx - 7 + fShift, hy - 16, 7, 8);
+                ctx.fillRect(hx - 10 + Math.round(fShift * 1.3), hy - 12, 5, 7);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx, hy - 11, 7, 3);
+                // Golden Potara earrings
+                ctx.fillStyle = '#ffd700';
+                ctx.fillRect(hx - 3, hy + 6, 2, 2);
+                ctx.fillRect(hx + 15, hy + 6, 2, 2);
+                break;
+
+            case 'toppo_head':
+                // Bald broad head with huge white mustache
+                ctx.fillStyle = '#e8e8e8';
+                ctx.fillRect(hx - 2, hy + 6, 6, 4);
+                ctx.fillRect(hx + 10, hy + 6, 6, 4);
+                ctx.fillRect(hx + 2, hy + 7, 10, 3);
+                // Glowing orange fierce eyes
+                ctx.fillStyle = '#ffaa00';
+                ctx.fillRect(hx + 5, hy + 4, 4, 2);
+                break;
+
+            case 'dbs_broly_hair':
+                // Emerald spiky mane with dynamic waving
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 5, hy - 11, 24, 12);
+                ctx.fillRect(hx - 8, hy - 6, 5, 9);
+                ctx.fillRect(hx + 17, hy - 6, 5, 9);
+                ctx.fillRect(hx - 2, hy - 17, 12, 7);
+                ctx.fillRect(hx + 5, hy - 21, 8, 5);
+                ctx.fillRect(hx + 3, hy - 1, 4, 5);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx, hy - 14, 7, 4);
+                break;
+
+            case 'moro_goat':
+                // Goat horns curving backwards & long white warlock beard
+                ctx.fillStyle = '#1c1b18';
+                ctx.fillRect(hx - 5, hy - 12, 4, 9);
+                ctx.fillRect(hx - 8, hy - 15, 5, 5);
+                ctx.fillRect(hx + 15, hy - 12, 4, 9);
+                ctx.fillRect(hx + 17, hy - 15, 5, 5);
+                // Long warlock beard swaying
+                ctx.fillStyle = '#e8e8e8';
+                ctx.fillRect(hx + 3, hy + 8, 8, 7 + Math.round(Math.sin(frame * 3) * 1.5));
+                ctx.fillRect(hx + 5, hy + 15, 4, 4);
+                break;
+
+            case 'granolah_hair':
+                // Turquoise green tied hair with braid
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 2, hy - 8, 18, 9);
+                ctx.fillRect(hx - 5, hy - 3, 4, 8);
+                ctx.fillRect(hx - 6 + fShift, hy + 5, 4, 9);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 1, hy - 6, 11, 2);
+                break;
+
+            case 'whis_pomp':
+                // Tall white angelic pompadour hair
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx, hy - 18, 14, 19);
+                ctx.fillRect(hx + 2, hy - 24, 10, 7);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 3, hy - 20, 6, 5);
+                break;
+
+            case 'omega_horns':
+                // Two massive upward pointing dragon horns
+                ctx.fillStyle = '#151518';
+                ctx.fillRect(hx - 3, hy - 15, 4, 16);
+                ctx.fillRect(hx - 5, hy - 20, 3, 6);
+                ctx.fillRect(hx + 13, hy - 15, 4, 16);
+                ctx.fillRect(hx + 16, hy - 20, 3, 6);
+                break;
+
+            case 'super17_hair':
+                // Slicked long black hair down to shoulders
+                ctx.fillStyle = hair;
+                ctx.fillRect(hx - 3, hy - 8, 20, 9);
+                ctx.fillRect(hx - 5, hy - 1, 4, 14);
+                ctx.fillRect(hx + 15, hy - 1, 4, 14);
+                ctx.fillStyle = hi;
+                ctx.fillRect(hx + 1, hy - 6, 12, 2);
+                break;
+
+            case 'pikkon_hat':
+                // Tall white otherworldly turban with blue jewel
+                ctx.fillStyle = '#f0f0e8';
+                ctx.fillRect(hx - 2, hy - 14, 18, 15);
+                ctx.fillRect(hx + 1, hy - 18, 12, 5);
+                // Blue gem
+                ctx.fillStyle = '#0088ff';
+                ctx.fillRect(hx + 5, hy - 6, 4, 4);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(hx + 6, hy - 5, 2, 2);
+                break;
+
+            case 'chaoz_hat':
+                // Black Qing cap with red pom-pom
+                ctx.fillStyle = '#151518';
+                ctx.fillRect(hx - 1, hy - 7, 16, 8);
+                ctx.fillRect(hx + 2, hy - 10, 10, 4);
+                ctx.fillStyle = '#ff2200';
+                ctx.fillRect(hx + 5, hy - 13, 4, 4);
                 break;
         }
     }

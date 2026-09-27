@@ -20,11 +20,11 @@ Juego de lucha retro 2D inspirado en las mecánicas clásicas de *Dragon Ball De
   * Carga de Ki con aura luminosa y zumbido dinámico.
   * Ráfagas rápidas y **Super Rayos continuos** (*Kamehameha, Galick Gun, Death Beam, Special Beam Cannon*).
   * **Choque de Poderes**: Si dos rayos colisionan de frente, compites pulsando botones para ganar la explosión.
-* **Roster Masivo de 48 Luchadores Icónicos (Cuadrícula Arcade 4x12)**:
-  * **Clásicos & Defensores**: Goku, Vegeta, Gohan (SSJ2), Trunks del Futuro, Piccolo, Krilin, Yamcha, Tenshinhan, Maestro Roshi, Goku Niño, Tao Pai Pai, Piccolo Daimaō.
-  * **Saga Saiyan, Fuerza Frieza & Androides**: Raditz, Nappa, Bardock, Capitán Ginyu, Recoome, Zarbon, Freezer, Cooler, Androide 16, Androide 17, Androide 18, Cell Perfecto.
-  * **Saga de Buu, Fusiones & Películas**: Dabura, Majin Buu, Kid Buu, Majin Vegeta, Gohan Definitivo, Gotenks (SSJ3), Vegetto, Gogeta, Broly (LSSJ), Janemba, Turles, Bojack.
-  * **Dragon Ball Super & GT**: Beerus, Golden Freezer, Goku Black (Rosé), Hit, Jiren, Goku Ultra Instinto, Vegeta Ultra Ego, Gohan Beast, Orange Piccolo, Goku SSJ4, Vegeta SSJ4, Gogeta SSJ4.
+* **Roster Legendario de 64 Luchadores (Cuadrícula Arcade 4x16)**:
+  * **Fila 1 (Clásicos & Guerreros Z)**: Goku, Vegeta, Gohan (SSJ2), Gohan del Futuro, Trunks del Futuro, Piccolo, Krilin, Yamcha, Tenshinhan, Chaoz, Maestro Roshi, Goku Niño, Tao Pai Pai, Piccolo Daimaō, Tapion, Pikkon.
+  * **Fila 2 (Saiyans, Fuerza Frieza, Androides & Jefes GT)**: Raditz, Nappa, Bardock, Capitán Ginyu, Recoome, Zarbon, Freezer, Cooler, Androide 16, Androide 17, Androide 18, Cell Perfecto, Super 17, Baby Vegeta, Omega Shenron, Broly (DBS).
+  * **Fila 3 (Saga Buu, Fusiones Divinas, Villanos de Películas & Multiverso)**: Dabura, Majin Buu, Kid Buu, Majin Vegeta, Gohan Definitivo, Gotenks (SSJ3), Vegetto, Vegetto Blue (SSB), Gogeta, Gogeta Blue (SSB), Kefla (SSJ2), Broly (Z LSSJ), Janemba, Turles, Bojack, Zamasu Fusionado.
+  * **Fila 4 (Super, Dioses de la Destrucción, Manga & GT)**: Beerus, Whis, Golden Freezer, Goku Black (Rosé), Hit, Jiren, Toppo (H.O.D.), Moro, Granolah, Goku Ultra Instinto, Vegeta Ultra Ego, Gohan Beast, Orange Piccolo, Goku SSJ4, Vegeta SSJ4, Gogeta SSJ4.
 * **4 Escenarios Épicos**: Torneo de Artes Marciales, Páramo Rocoso, Planeta Namek y Habitación del Tiempo.
 * **Compatibilidad Total**: Teclado reasignable, Ratón y Pantallas Táctiles (selección directa por click), y Mandos USB/Bluetooth (Xbox, PlayStation).
 
