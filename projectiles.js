@@ -8,7 +8,7 @@ class ProjectileManager {
 
     // Spawn a rapid Ki blast
     spawnKiBlast(owner, x, y, dirX, dirY, color = '#ffeb3b') {
-        const speed = 11;
+        const speed = 12.5;
         // Normalize direction
         const len = Math.hypot(dirX, dirY) || 1;
         const vx = (dirX / len) * speed;
@@ -21,6 +21,7 @@ class ProjectileManager {
             radius: 7 * (owner.damageMultiplier && owner.damageMultiplier > 1 ? 1.2 : 1),
             color,
             life: 80,
+            deflected: false,
             damage: 8 * (owner.damageMultiplier || 1.0),
             hitbox: {
                 width: 14 * (owner.damageMultiplier && owner.damageMultiplier > 1 ? 1.2 : 1),
@@ -46,10 +47,10 @@ class ProjectileManager {
             length: 0,
             maxLength: 950,
             width: 24 * (owner.damageMultiplier && owner.damageMultiplier > 1 ? 1.25 : 1),
-            speed: 28,
+            speed: 30,
             active: true,
-            duration: 90, // frames beam stays active
-            damagePerFrame: 0.9 * (owner.damageMultiplier || 1.0),
+            duration: 68, // synced with fighter beam stateTimer
+            damagePerFrame: 1.05 * (owner.damageMultiplier || 1.0),
             color: charConfig.beamColor || '#00e1ff',
             coreColor: charConfig.beamCore || '#ffffff',
             specialName: charConfig.specialName
@@ -91,12 +92,14 @@ class ProjectileManager {
 
             // Check arena bounds
             if (b.x < 10 || b.x > arenaWidth - 10 || b.y < 10 || b.y > arenaHeight - 10 || b.life <= 0) {
-                if (window.particleSystem) {
+                if (window.particleSystem && !b.deflected) {
                     window.particleSystem.createExplosion(b.x, b.y, b.color, 10);
                 }
                 this.blasts.splice(i, 1);
                 continue;
             }
+
+            if (b.deflected) continue;
 
             // Check collision with fighters
             let hit = false;
@@ -110,6 +113,11 @@ class ProjectileManager {
                         if (window.particleSystem) {
                             window.particleSystem.createHitSparks(b.x, b.y, '#00e1ff', 8);
                         }
+                        // Deflect Ki blast off in a diagonal direction like classic DBZ!
+                        b.deflected = true;
+                        b.vx = -b.vx * 0.65;
+                        b.vy = (Math.random() > 0.5 ? 1 : -1) * (6 + Math.random() * 4);
+                        b.life = 16;
                     } else {
                         if (window.particleSystem) {
                             window.particleSystem.createExplosion(b.x, b.y, b.color, 14);
@@ -117,8 +125,8 @@ class ProjectileManager {
                         if (window.soundEngine) {
                             window.soundEngine.playExplosion(false);
                         }
+                        this.blasts.splice(i, 1);
                     }
-                    this.blasts.splice(i, 1);
                     hit = true;
                     break;
                 }
@@ -128,7 +136,7 @@ class ProjectileManager {
             // Check blast vs blast collision
             for (let j = i - 1; j >= 0; j--) {
                 const b2 = this.blasts[j];
-                if (b.owner !== b2.owner && Math.hypot(b.x - b2.x, b.y - b2.y) < b.radius + b2.radius + 4) {
+                if (!b2.deflected && b.owner !== b2.owner && Math.hypot(b.x - b2.x, b.y - b2.y) < b.radius + b2.radius + 4) {
                     const midX = (b.x + b2.x) / 2;
                     const midY = (b.y + b2.y) / 2;
                     if (window.particleSystem) {
@@ -150,23 +158,33 @@ class ProjectileManager {
         for (let i = this.beams.length - 1; i >= 0; i--) {
             const beam = this.beams[i];
 
+            // If owner was hit, knocked down, defeated, or exited beam state (outside clash), cancel beam
+            const inClash = this.clash && (this.clash.beam1 === beam || this.clash.beam2 === beam);
+            if (beam.owner && (beam.owner.isDefeated || beam.owner.state === 'hurt' || beam.owner.state === 'knockdown' || (!inClash && beam.owner.state !== 'beam'))) {
+                this.beams.splice(i, 1);
+                if (inClash) {
+                    this.resolveClash();
+                }
+                continue;
+            }
+
             // Anchor start position to owner's hands
             if (beam.owner) {
                 beam.startX = beam.owner.x + (beam.owner.facing > 0 ? 14 : -14);
                 beam.startY = beam.owner.y - 4;
             }
 
-            if (this.clash && (this.clash.beam1 === beam || this.clash.beam2 === beam)) {
+            if (inClash) {
                 // If in clash, beam length terminates at the clash point
                 const clashDist = Math.hypot(this.clash.x - beam.startX, this.clash.y - beam.startY);
                 beam.length = clashDist;
+                beam.duration = Math.max(beam.duration, 10);
             } else {
                 if (beam.length < beam.maxLength) {
                     beam.length += beam.speed;
                 }
+                beam.duration--;
             }
-
-            beam.duration--;
 
             // Continuous damage along beam ray
             const beamEndX = beam.startX + beam.dirX * beam.length;

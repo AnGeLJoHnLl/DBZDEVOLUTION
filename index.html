@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ki Clash: Super Devolution Arena</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
     <style>
 * {
     box-sizing: border-box;
@@ -523,9 +523,9 @@ input:checked + .slider:before {
     <div class="game-viewport scanlines" id="gameViewport">
         <!-- Floating HUD Menu -->
         <div class="floating-hud">
-            <button class="hud-btn" id="btnOpenSettings">⚙️ AJUSTES [ESC]</button>
-            <button class="hud-btn" id="btnToggleCRT">📺 CRT: ON</button>
-            <button class="hud-btn" id="btnFullscreen">⛶ PANTALLA COMPLETA</button>
+            <button class="hud-btn" id="btnOpenSettings">âš™ï¸ AJUSTES [ESC]</button>
+            <button class="hud-btn" id="btnToggleCRT">ðŸ“º CRT: ON</button>
+            <button class="hud-btn" id="btnFullscreen">â›¶ PANTALLA COMPLETA</button>
         </div>
 
         <!-- Fullscreen Canvas -->
@@ -535,13 +535,13 @@ input:checked + .slider:before {
         <div class="touch-controls" id="touchControls">
             <div class="touch-dpad">
                 <div></div>
-                <div class="touch-btn" data-key="up">▲</div>
+                <div class="touch-btn" data-key="up">â–²</div>
                 <div></div>
-                <div class="touch-btn" data-key="left">◀</div>
+                <div class="touch-btn" data-key="left">â—€</div>
                 <div></div>
-                <div class="touch-btn" data-key="right">▶</div>
+                <div class="touch-btn" data-key="right">â–¶</div>
                 <div></div>
-                <div class="touch-btn" data-key="down">▼</div>
+                <div class="touch-btn" data-key="down">â–¼</div>
                 <div></div>
             </div>
             <div class="touch-actions">
@@ -560,15 +560,15 @@ input:checked + .slider:before {
         <div class="settings-card">
             <!-- Modal Header -->
             <div class="settings-header">
-                <div class="settings-title">⚙️ AJUSTES DEL JUEGO</div>
+                <div class="settings-title">âš™ï¸ AJUSTES DEL JUEGO</div>
                 <button class="btn-close" id="btnCloseSettings">&times;</button>
             </div>
 
             <!-- Tab Navigation -->
             <div class="settings-tabs">
-                <button class="tab-btn active" data-tab="tab-sound">🔊 SONIDO Y PANTALLA</button>
-                <button class="tab-btn" data-tab="tab-controls">⌨️ CONFIGURAR TECLAS</button>
-                <button class="tab-btn" data-tab="tab-guide">📖 GUÍA Y LEYENDA</button>
+                <button class="tab-btn active" data-tab="tab-sound">ðŸ”Š SONIDO Y PANTALLA</button>
+                <button class="tab-btn" data-tab="tab-controls">âŒ¨ï¸ CONFIGURAR TECLAS</button>
+                <button class="tab-btn" data-tab="tab-guide">ðŸ“– GUÃA Y LEYENDA</button>
             </div>
 
             <!-- Tab 1: Sonido y Pantalla -->
@@ -599,7 +599,7 @@ input:checked + .slider:before {
                     <div class="setting-row">
                         <div class="setting-label">
                             <span class="setting-title">Filtro Retro CRT Scanlines</span>
-                            <span class="setting-desc">Líneas de escaneo para estilo arcade clásico</span>
+                            <span class="setting-desc">LÃ­neas de escaneo para estilo arcade clÃ¡sico</span>
                         </div>
                         <label class="switch">
                             <input type="checkbox" id="crtToggle" checked>
@@ -620,41 +620,41 @@ input:checked + .slider:before {
                     </div>
                 </div>
 
-                <!-- Tab 3: Guía y Leyenda -->
+                <!-- Tab 3: GuÃ­a y Leyenda -->
                 <div class="tab-content" id="tab-guide">
                     <div class="guide-section">
-                        <div class="guide-title">🥋 SISTEMA DE COMBATE CUERPO A CUERPO</div>
+                        <div class="guide-title">ðŸ¥‹ SISTEMA DE COMBATE CUERPO A CUERPO</div>
                         <ul class="guide-list">
-                            <li><strong>Combo de 4 golpes:</strong> Presiona repetidamente Golpe para encadenar Jab → Cross → Patada → Golpe Final.</li>
-                            <li><strong>Knockback:</strong> El último golpe lanza al rival contra el límite del escenario con daño aumentado.</li>
-                            <li><strong>Guardia / Bloqueo Total (Tecla U / I):</strong> Mantener Defensa bloquea el <strong>100% del daño (0 daño)</strong> contra golpes, ráfagas y rayos, interrumpe combos enemigos y te permite recuperarte inmediatamente del aturdimiento.</li>
+                            <li><strong>Combo de 4 golpes:</strong> Presiona repetidamente Golpe para encadenar Jab â†’ Cross â†’ Patada â†’ Golpe Final.</li>
+                            <li><strong>Knockback:</strong> El Ãºltimo golpe lanza al rival contra el lÃ­mite del escenario con daÃ±o aumentado.</li>
+                            <li><strong>Guardia / Bloqueo Total (Tecla U / I):</strong> Mantener Defensa bloquea el <strong>100% del daÃ±o (0 daÃ±o)</strong> contra golpes, rÃ¡fagas y rayos, interrumpe combos enemigos y te permite recuperarte inmediatamente del aturdimiento.</li>
                         </ul>
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title">⚡ SISTEMA DE ENERGÍA Y KI</div>
+                        <div class="guide-title">âš¡ SISTEMA DE ENERGÃA Y KI</div>
                         <ul class="guide-list">
-                            <li><strong>Cargar Ki:</strong> Mantén presionado Carga de Ki para regenerar tu medidor azul con aura.</li>
-                            <li><strong>Ráfagas Ki:</strong> Ataques de proyectil rápidos a distancia (consumen 6 Ki).</li>
-                            <li><strong>Super Rayos (Kamehameha, etc.):</strong> Requieren 35 Ki. Atraviesan proyectiles normales y causan daño continuo.</li>
-                            <li><strong>Choque de Poderes (Beam Clash):</strong> Si dos rayos chocan de frente, ¡pulsa botones rápidamente para ganar el choque!</li>
+                            <li><strong>Cargar Ki:</strong> MantÃ©n presionado Carga de Ki para regenerar tu medidor azul con aura.</li>
+                            <li><strong>RÃ¡fagas Ki:</strong> Ataques de proyectil rÃ¡pidos a distancia (consumen 6 Ki).</li>
+                            <li><strong>Super Rayos (Kamehameha, etc.):</strong> Requieren 35 Ki. Atraviesan proyectiles normales y causan daÃ±o continuo.</li>
+                            <li><strong>Choque de Poderes (Beam Clash):</strong> Si dos rayos chocan de frente, Â¡pulsa botones rÃ¡pidamente para ganar el choque!</li>
                         </ul>
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title">🌟 TRANSFORMACIONES EN COMBATE</div>
+                        <div class="guide-title">ðŸŒŸ TRANSFORMACIONES EN COMBATE</div>
                         <ul class="guide-list">
                             <li><strong>Requisito:</strong> Carga tu Ki al 100% (medidor lleno).</li>
-                            <li><strong>Cómo Transformarse:</strong> Mantén presionado <strong>Cargar Ki</strong> con Ki al 100% durante ~0.7 segundos, o presiona <strong>Golpe + Cargar</strong> para despertar instantáneo.</li>
-                            <li><strong>Efectos:</strong> Onda de choque expansiva que empuja al rival, recuperación de <strong>+20 HP</strong>, <strong>+12% velocidad</strong>, <strong>+25% daño</strong> en golpes y rayos más gruesos y devastadores.</li>
-                            <li><strong>Luchadores con Transformaciones:</strong> Goku (Base → SSJ → Ultra Instinto), Vegeta (Base → SSJ → Majin → Ultra Ego), Gohan (SSJ2 → Ultimate → Beast), Trunks (Base → SSJ), Piccolo (→ Orange Piccolo), Freezer (→ Golden Freezer), Vegetto / Gogeta (→ SSB), Broly (→ DBS Full Power), Majin Buu (→ Kid Buu), Goku Black (→ Zamasu Fusionado) y más.</li>
+                            <li><strong>CÃ³mo Transformarse:</strong> MantÃ©n presionado <strong>Cargar Ki</strong> con Ki al 100% durante ~0.7 segundos, o presiona <strong>Golpe + Cargar</strong> para despertar instantÃ¡neo.</li>
+                            <li><strong>Efectos:</strong> Onda de choque expansiva que empuja al rival, recuperaciÃ³n de <strong>+20 HP</strong>, <strong>+12% velocidad</strong>, <strong>+25% daÃ±o</strong> en golpes y rayos mÃ¡s gruesos y devastadores.</li>
+                            <li><strong>Luchadores con Transformaciones:</strong> Goku (Base â†’ SSJ â†’ Ultra Instinto), Vegeta (Base â†’ SSJ â†’ Majin â†’ Ultra Ego), Gohan (SSJ2 â†’ Ultimate â†’ Beast), Trunks (Base â†’ SSJ), Piccolo (â†’ Orange Piccolo), Freezer (â†’ Golden Freezer), Vegetto / Gogeta (â†’ SSB), Broly (â†’ DBS Full Power), Majin Buu (â†’ Kid Buu), Goku Black (â†’ Zamasu Fusionado) y mÃ¡s.</li>
                         </ul>
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title">🎮 COMPATIBILIDAD CON MANDOS</div>
+                        <div class="guide-title">ðŸŽ® COMPATIBILIDAD CON MANDOS</div>
                         <ul class="guide-list">
-                            <li>Conecta cualquier mando de <strong>Xbox, PlayStation o genérico USB</strong> y se detectará automáticamente.</li>
+                            <li>Conecta cualquier mando de <strong>Xbox, PlayStation o genÃ©rico USB</strong> y se detectarÃ¡ automÃ¡ticamente.</li>
                             <li>Stick/D-pad para moverte, X para golpear, A para Ki, B para Rayo, Gatillos para Cargar y Dash.</li>
                         </ul>
                     </div>
@@ -670,12 +670,12 @@ input:checked + .slider:before {
     </div>
 
     <!-- Game Scripts with cache busting -->
-    <script src="audio.js?v=3"></script>
-    <script src="particles.js?v=3"></script>
-    <script src="renderer.js?v=3"></script>
-    <script src="projectiles.js?v=3"></script>
-    <script src="fighter.js?v=3"></script>
-    <script src="game.js?v=3"></script>
+    <script src="audio.js?v=4"></script>
+    <script src="particles.js?v=4"></script>
+    <script src="renderer.js?v=4"></script>
+    <script src="projectiles.js?v=4"></script>
+    <script src="fighter.js?v=4"></script>
+    <script src="game.js?v=4"></script>
 
     <!-- Modal UI and Remapping Logic -->
     <script>
@@ -708,11 +708,11 @@ input:checked + .slider:before {
             down: 'Mover Abajo',
             left: 'Mover Izquierda',
             right: 'Mover Derecha',
-            attack: 'Golpe / Combo Físico',
-            kiBlast: 'Ráfaga de Ki Rápida',
-            beam: 'Super Rayo de Energía (Kamehameha)',
+            attack: 'Golpe / Combo FÃ­sico',
+            kiBlast: 'RÃ¡faga de Ki RÃ¡pida',
+            beam: 'Super Rayo de EnergÃ­a (Kamehameha)',
             charge: 'Cargar Ki (Aura)',
-            dash: 'Teletransporte / Dash Rápido',
+            dash: 'Teletransporte / Dash RÃ¡pido',
             guard: 'Guardia / Bloqueo'
         };
 
@@ -867,11 +867,11 @@ input:checked + .slider:before {
         function updateCRTUI(enabled) {
             if (enabled) {
                 gameViewport.classList.add('scanlines');
-                btnToggleCRT.textContent = '📺 CRT: ON';
+                btnToggleCRT.textContent = 'ðŸ“º CRT: ON';
                 btnToggleCRT.classList.remove('active');
             } else {
                 gameViewport.classList.remove('scanlines');
-                btnToggleCRT.textContent = '📺 CRT: OFF';
+                btnToggleCRT.textContent = 'ðŸ“º CRT: OFF';
                 btnToggleCRT.classList.add('active');
             }
             crtToggle.checked = enabled;
@@ -889,18 +889,18 @@ input:checked + .slider:before {
         btnFullscreen.addEventListener('click', () => {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(() => {});
-                btnFullscreen.textContent = '⛶ SALIR PANTALLA COMPLETA';
+                btnFullscreen.textContent = 'â›¶ SALIR PANTALLA COMPLETA';
             } else {
                 document.exitFullscreen().catch(() => {});
-                btnFullscreen.textContent = '⛶ PANTALLA COMPLETA';
+                btnFullscreen.textContent = 'â›¶ PANTALLA COMPLETA';
             }
         });
 
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
-                btnFullscreen.textContent = '⛶ PANTALLA COMPLETA';
+                btnFullscreen.textContent = 'â›¶ PANTALLA COMPLETA';
             } else {
-                btnFullscreen.textContent = '⛶ SALIR PANTALLA COMPLETA';
+                btnFullscreen.textContent = 'â›¶ SALIR PANTALLA COMPLETA';
             }
         });
 
@@ -911,16 +911,12 @@ input:checked + .slider:before {
 
             const triggerDown = (e) => {
                 e.preventDefault();
-                if (window.game && window.game.p1) {
-                    window.game.p1.input[action] = true;
-                }
+                if (window.game) { if (window.game.touchInput) window.game.touchInput[action] = true; if (window.game.p1) window.game.p1.input[action] = true; if (window.projectileManager && window.projectileManager.clash && window.game.p1) window.projectileManager.mashClash(window.game.p1); }
                 if (window.soundEngine) window.soundEngine.resume();
             };
             const triggerUp = (e) => {
                 e.preventDefault();
-                if (window.game && window.game.p1) {
-                    window.game.p1.input[action] = false;
-                }
+                if (window.game) { if (window.game.touchInput) window.game.touchInput[action] = false; if (window.game.p1) window.game.p1.input[action] = false; }
             };
 
             btn.addEventListener('touchstart', triggerDown, { passive: false });

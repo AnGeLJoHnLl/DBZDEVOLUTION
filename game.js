@@ -51,6 +51,7 @@ class KiClashGame {
 
         // Keys tracking & Configurable Keybindings
         this.keys = {};
+        this.touchInput = {};
         this.initKeybindings();
         this.setupInputs();
 
@@ -218,6 +219,18 @@ class KiClashGame {
                 if (e.code === 'Enter' || e.code === this.keyBindings.p1.attack || e.code === 'KeyJ') {
                     this.startFight();
                 }
+            } else if (this.state === 'FIGHT' && !this.isPaused && !e.repeat) {
+                // Active Beam Clash button mashing for human players!
+                if (window.projectileManager && window.projectileManager.clash) {
+                    const b1 = this.keyBindings.p1;
+                    const b2 = this.keyBindings.p2;
+                    if (e.code === b1.attack || e.code === b1.kiBlast || e.code === b1.beam || e.code === b1.charge || e.code === 'KeyJ' || e.code === 'KeyK' || e.code === 'KeyL' || e.code === 'Space') {
+                        window.projectileManager.mashClash(this.p1);
+                    }
+                    if (!this.p2.isAI && (e.code === b2.attack || e.code === b2.kiBlast || e.code === b2.beam || e.code === b2.charge || e.code === 'Numpad1' || e.code === 'Numpad2' || e.code === 'Numpad3' || e.code === 'Enter')) {
+                        window.projectileManager.mashClash(this.p2);
+                    }
+                }
             } else if (this.state === 'GAMEOVER' && !this.isPaused) {
                 if (e.code === 'Enter' || e.code === this.keyBindings.p1.attack || e.code === 'KeyJ') {
                     this.state = 'SELECT';
@@ -234,9 +247,9 @@ class KiClashGame {
             const mx = (e.clientX - rect.left) * scaleX;
             const my = (e.clientY - rect.top) * scaleY;
 
-            if (this.state === 'TITLE') {
-                if (my >= 220 && my <= 270) {
-                    this.mode = my < 245 ? '1P_CPU' : '2P_LOCAL';
+            if (this.state === 'MENU') {
+                if (my >= 165 && my <= 240) {
+                    this.mode = my < 205 ? '1P_CPU' : '1P_2P';
                 }
                 this.state = 'SELECT';
                 if (window.soundEngine) window.soundEngine.playHit(true);
@@ -340,17 +353,17 @@ class KiClashGame {
         const b1 = this.keyBindings.p1;
         const b2 = this.keyBindings.p2;
 
-        // Player 1 Controls
-        this.p1.input.up = !!(this.keys[b1.up]);
-        this.p1.input.down = !!(this.keys[b1.down]);
-        this.p1.input.left = !!(this.keys[b1.left]);
-        this.p1.input.right = !!(this.keys[b1.right]);
-        this.p1.input.attack = !!(this.keys[b1.attack]);
-        this.p1.input.kiBlast = !!(this.keys[b1.kiBlast]);
-        this.p1.input.beam = !!(this.keys[b1.beam]);
-        this.p1.input.charge = !!(this.keys[b1.charge]);
-        this.p1.input.dash = !!(this.keys[b1.dash]);
-        this.p1.input.guard = !!(this.keys[b1.guard] || this.keys['KeyU'] || this.keys['KeyI']);
+        // Player 1 Controls (Keyboard + Touch)
+        this.p1.input.up = !!(this.keys[b1.up] || this.touchInput.up);
+        this.p1.input.down = !!(this.keys[b1.down] || this.touchInput.down);
+        this.p1.input.left = !!(this.keys[b1.left] || this.touchInput.left);
+        this.p1.input.right = !!(this.keys[b1.right] || this.touchInput.right);
+        this.p1.input.attack = !!(this.keys[b1.attack] || this.touchInput.attack);
+        this.p1.input.kiBlast = !!(this.keys[b1.kiBlast] || this.touchInput.kiBlast);
+        this.p1.input.beam = !!(this.keys[b1.beam] || this.touchInput.beam);
+        this.p1.input.charge = !!(this.keys[b1.charge] || this.touchInput.charge);
+        this.p1.input.dash = !!(this.keys[b1.dash] || this.touchInput.dash);
+        this.p1.input.guard = !!(this.keys[b1.guard] || this.keys['KeyU'] || this.keys['KeyI'] || this.touchInput.guard);
 
         // Gamepad 1 for Player 1
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -423,6 +436,24 @@ class KiClashGame {
 
             this.p1.update(this.width, this.height, this.p2);
             this.p2.update(this.width, this.height, this.p1);
+
+            // Soft Fighter-to-Fighter Pushbox Separation (prevents standing on the exact same pixel)
+            if (!this.p1.isDefeated && !this.p2.isDefeated && this.p1.state !== 'dash' && this.p2.state !== 'dash') {
+                const dx = this.p2.x - this.p1.x;
+                const dy = this.p2.y - this.p1.y;
+                const dist = Math.hypot(dx, dy);
+                const minDist = 20;
+                if (dist < minDist) {
+                    const pushX = ((dx === 0 ? (this.p1.facing || 1) : dx / dist) * (minDist - dist)) * 0.5;
+                    const pushY = (dist > 0 ? (dy / dist) * (minDist - dist) : 0) * 0.3;
+                    this.p1.x -= pushX;
+                    this.p2.x += pushX;
+                    this.p1.y -= pushY;
+                    this.p2.y += pushY;
+                    this.p1.clampPosition(this.width, this.height);
+                    this.p2.clampPosition(this.width, this.height);
+                }
+            }
 
             if (window.projectileManager) {
                 window.projectileManager.update(this.width, this.height, this.fighters);
